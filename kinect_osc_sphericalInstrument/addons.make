@@ -1,2 +1,0 @@
-ofxKinectForWindows2
-ofxOsc
