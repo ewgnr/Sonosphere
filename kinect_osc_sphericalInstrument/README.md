@@ -1,9 +1,3 @@
-# Kinect Skeleton OSC Sender
-
-Dieses Projekt ist eine OpenFrameworks-basierte Anwendung, die mithilfe eines Kinect v2 Sensors die Position von 25 Gelenkpunkten erfasst und sie als OSC-Nachricht sendet.
-
-## 💡 Features
-
 - Echtzeit-Erkennung von Skeleton-Daten (Kinect v2)
 - Sendet 3D-Koordinaten der 25 Gelenkpunkte über OSC
 - Visualisiert Gelenkpunkte in der App
