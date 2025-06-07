@@ -7,28 +7,20 @@ Senden von 3D-Koordinaten (x, y, z) der Gelenkpunkte über OSC
 Live-Visualisierung der Gelenkpunkte in der App
 Dynamische Skalierung der Ausgabe über Tastatur (+ / -)
 
-🛠️ Voraussetzungen
-Windows 10 oder 11
-Azure Kinect SDK (mindestens Version 1.4.1 empfohlen)
-OpenFrameworks 0.11.2 oder neuer
-ofxAzureKinect Addon
-Visual Studio 2019 oder 2022
-Azure Kinect DK Sensor mit Netzteil und USB 3.0
-
-📦 Installation & Setup
+Installation & Setup
 Install AzureSDK and Addon:
 SDK: https://learn.microsoft.com/en-us/previous-versions/azure/kinect-dk/sensor-sdk-download
 Addon: https://github.com/prisonerjohn/ofxAzureKinect.git
 In VS Code add Linker to SDK Files. 
 Copy files from SDK Bin Folder in Project Bin Folder!
 
-🎚️ OSC Einstellungen
+OSC Einstellungen
 IP-Adresse: 127.0.0.1
 Port: 9004
 OSC-Adresse: /mocap/joint/pos_world
 Nachrichtenformat: 32 Gelenke × 3 Float-Werte (x, y, z) pro Gelenk
 
-🎮 Bedienung
+Bedienung
 Mit der Taste + / = den Skalierungsfaktor erhöhen
 Mit der Taste - / _ den Skalierungsfaktor verringern
 
