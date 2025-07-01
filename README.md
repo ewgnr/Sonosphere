@@ -14,7 +14,7 @@
 - [MotionTransformation](https://github.com/ewgnr/Sonosphere/tree/main/MotionTransformation): A Python-based tool that employs a generative AI to interpolate between and manipulate dance movements.
 - [SphericalSoundfilePlayer_Mac](https://github.com/ewgnr/Sonosphere/tree/main/SphericalSoundfilePlayer_v8_Mac): The MacOS version of a C++-based tool for processing and playing audio files that are distributed on the surface of a virtual sphere
 - [SphericalSoundfilePlayer_Windows](https://github.com/ewgnr/Sonosphere/tree/main/SphericalSoundfilePlayer_v8_Win): The Windows version of a C++-based tool for processing and playing audio files that are distributed on the surface of a virtual sphere
-- [SphericalSoundfilePlayer_Windows](https://github.com/ewgnr/Sonosphere/tree/main/RayMarching): OpenGL-based tool for generating video based on ray marching method.
+- [RayMarching](https://github.com/ewgnr/Sonosphere/tree/main/RayMarching): OpenGL-based tool for generating video based on ray marching method.
 
 
 
