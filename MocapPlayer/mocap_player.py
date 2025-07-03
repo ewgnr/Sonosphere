@@ -13,7 +13,7 @@ Setup Motion Player
 # Example Qualisys Mocap Recording
 
 motion_player.config = { 
-    "file_name": "../../data/mocap/DeanNoel_Ocean_Take1_50fps.fbx",
+    "file_name": "../Data/mocap/ChineseRoom_Daniel_Take1_50fps.fbx",
     "fps": 50,
     "hip_joint_index": 0,
     "remove_hip_offset": True,

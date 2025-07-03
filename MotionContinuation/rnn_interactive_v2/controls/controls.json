@@ -1,0 +1,165 @@
+{
+	"pattrstorage" : 	{
+		"name" : "u845000342",
+		"slots" : 		{
+			"1" : 			{
+				"id" : 1,
+				"data" : 				{
+					"input_sequence_start" : [ 64 ],
+					"joint_index" : [ 1 ],
+					"leftarm_rot_angle" : [ 0.5 ],
+					"leftarm_rot_axis_x" : [ 1.0 ],
+					"leftarm_rot_axis_y" : [ 0.0 ],
+					"leftarm_rot_axis_z" : [ 0.0 ],
+					"leftleg_rot_angle" : [ 0.5 ],
+					"leftleg_rot_axis_x" : [ 1.0 ],
+					"leftleg_rot_axis_y" : [ 0.0 ],
+					"leftleg_rot_axis_z" : [ 0.0 ],
+					"occlusionResol" : [ 0.5 ],
+					"rightarm_rot_angle" : [ 0.5 ],
+					"rightarm_rot_axis_x" : [ 1.0 ],
+					"rightarm_rot_axis_y" : [ 0.0 ],
+					"rightarm_rot_axis_z" : [ 0.0 ],
+					"rightleg_rot_angle" : [ 0.5 ],
+					"rightleg_rot_axis_x" : [ 1.0 ],
+					"rightleg_rot_axis_y" : [ 0.0 ],
+					"rightleg_rot_axis_z" : [ 0.0 ],
+					"rot_repeat" : [ 0 ],
+					"rot_repeat[1]" : [ 0 ],
+					"rot_repeat[2]" : [ 0 ],
+					"rot_repeat[3]" : [ 0 ],
+					"rot_repeat[4]" : [ 0 ],
+					"rot_repeat[5]" : [ 0 ],
+					"rotaxis_x" : [ 1.0 ],
+					"rotaxis_y" : [ 0.0 ],
+					"rotaxis_z" : [ 0.0 ],
+					"spine_rot_angle" : [ 0.5 ],
+					"spine_rot_axis_x" : [ 1.0 ],
+					"spine_rot_axis_y" : [ 0.0 ],
+					"spine_rot_axis_z" : [ 0.0 ]
+				}
+
+			}
+,
+			"2" : 			{
+				"id" : 2,
+				"data" : 				{
+					"input_sequence_start" : [ 6312 ],
+					"joint_index" : [ 1 ],
+					"leftarm_rot_angle" : [  ],
+					"leftarm_rot_axis_x" : [  ],
+					"leftarm_rot_axis_y" : [  ],
+					"leftarm_rot_axis_z" : [  ],
+					"leftleg_rot_angle" : [  ],
+					"leftleg_rot_axis_x" : [  ],
+					"leftleg_rot_axis_y" : [  ],
+					"leftleg_rot_axis_z" : [  ],
+					"occlusionResol" : [ 0.71032205008489 ],
+					"rightarm_rot_angle" : [  ],
+					"rightarm_rot_axis_x" : [  ],
+					"rightarm_rot_axis_y" : [  ],
+					"rightarm_rot_axis_z" : [  ],
+					"rightleg_rot_angle" : [  ],
+					"rightleg_rot_axis_x" : [  ],
+					"rightleg_rot_axis_y" : [  ],
+					"rightleg_rot_axis_z" : [  ],
+					"rot_repeat" : [ 1 ],
+					"rot_repeat[1]" : [  ],
+					"rot_repeat[2]" : [  ],
+					"rot_repeat[3]" : [  ],
+					"rot_repeat[4]" : [  ],
+					"rot_repeat[5]" : [  ],
+					"rotaxis_x" : [ 0.0 ],
+					"rotaxis_y" : [ 1.0 ],
+					"rotaxis_z" : [ 0.0 ],
+					"spine_rot_angle" : [  ],
+					"spine_rot_axis_x" : [  ],
+					"spine_rot_axis_y" : [  ],
+					"spine_rot_axis_z" : [  ]
+				}
+
+			}
+,
+			"3" : 			{
+				"id" : 3,
+				"data" : 				{
+					"input_sequence_start" : [ 6312 ],
+					"joint_index" : [ 1 ],
+					"leftarm_rot_angle" : [  ],
+					"leftarm_rot_axis_x" : [  ],
+					"leftarm_rot_axis_y" : [  ],
+					"leftarm_rot_axis_z" : [  ],
+					"leftleg_rot_angle" : [  ],
+					"leftleg_rot_axis_x" : [  ],
+					"leftleg_rot_axis_y" : [  ],
+					"leftleg_rot_axis_z" : [  ],
+					"occlusionResol" : [ 0.0 ],
+					"rightarm_rot_angle" : [  ],
+					"rightarm_rot_axis_x" : [  ],
+					"rightarm_rot_axis_y" : [  ],
+					"rightarm_rot_axis_z" : [  ],
+					"rightleg_rot_angle" : [  ],
+					"rightleg_rot_axis_x" : [  ],
+					"rightleg_rot_axis_y" : [  ],
+					"rightleg_rot_axis_z" : [  ],
+					"rot_repeat" : [ 1 ],
+					"rot_repeat[1]" : [  ],
+					"rot_repeat[2]" : [  ],
+					"rot_repeat[3]" : [  ],
+					"rot_repeat[4]" : [  ],
+					"rot_repeat[5]" : [  ],
+					"rotaxis_x" : [ 1.0 ],
+					"rotaxis_y" : [ 0.0 ],
+					"rotaxis_z" : [ 0.0 ],
+					"spine_rot_angle" : [  ],
+					"spine_rot_axis_x" : [  ],
+					"spine_rot_axis_y" : [  ],
+					"spine_rot_axis_z" : [  ]
+				}
+
+			}
+,
+			"1000" : 			{
+				"id" : 1000,
+				"data" : 				{
+					"input_sequence_start" : [ 6312 ],
+					"joint_index" : [ 1 ],
+					"leftarm_rot_angle" : [  ],
+					"leftarm_rot_axis_x" : [  ],
+					"leftarm_rot_axis_y" : [  ],
+					"leftarm_rot_axis_z" : [  ],
+					"leftleg_rot_angle" : [  ],
+					"leftleg_rot_axis_x" : [  ],
+					"leftleg_rot_axis_y" : [  ],
+					"leftleg_rot_axis_z" : [  ],
+					"occlusionResol" : [ 0.71032205008489 ],
+					"rightarm_rot_angle" : [  ],
+					"rightarm_rot_axis_x" : [  ],
+					"rightarm_rot_axis_y" : [  ],
+					"rightarm_rot_axis_z" : [  ],
+					"rightleg_rot_angle" : [  ],
+					"rightleg_rot_axis_x" : [  ],
+					"rightleg_rot_axis_y" : [  ],
+					"rightleg_rot_axis_z" : [  ],
+					"rot_repeat" : [ 1 ],
+					"rot_repeat[1]" : [  ],
+					"rot_repeat[2]" : [  ],
+					"rot_repeat[3]" : [  ],
+					"rot_repeat[4]" : [  ],
+					"rot_repeat[5]" : [  ],
+					"rotaxis_x" : [ 0.0 ],
+					"rotaxis_y" : [ 1.0 ],
+					"rotaxis_z" : [ 0.0 ],
+					"spine_rot_angle" : [  ],
+					"spine_rot_axis_x" : [  ],
+					"spine_rot_axis_y" : [  ],
+					"spine_rot_axis_z" : [  ]
+				}
+
+			}
+
+		}
+
+	}
+
+}

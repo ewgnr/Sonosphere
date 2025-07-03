@@ -1,0 +1,41 @@
+Sequence Continuation
+
+Trained on all:
+
+AoiFire_take002_chr00 [ [ 7306, 15887 ] ]
+CryingHoise_AoiSolo_take001_chr00 [ [ 0, 7895 ] ]
+CryingHouse_AoiSolo_theEnd_take001_chr00.pkl [ [ 0, 3240 ] ]
+CubeTravelHittingMovement_take001_chr00.pkl [ [ 309, 5711 ] ]
+EstebanLining_take001_chr00.pkl [ [ 1313, 4075 ] ]
+Garden2_Movment_take001_chr00.pkl [ [ 375, 7517 ] ]
+GriefExtremePosition_take001_chr00.pkl [ [ 387, 2309 ], [ 4108, 4829 ] ]
+LeaningExtremeMovement_take001_chr00.pkl [ [ 298, 9301 ] ]
+LookingAround_take001_chr00.pkl [ [ 190, 7750 ] ]
+LookingThroughHoles_take002_chr00.pkl [ [ 257, 5767 ] ]
+TaraSolo1_take003_chr00.pkl [ [ 439, 13819 ] ]
+Wonder_take001_chr00.pkl [ [ 352, 5514 ] ]
+
+
+AoiFire_take002_chr00
+7300: faithful reconstruction until after 2 mins 35 secs enters loop of repeatedly lifting left leg
+7800: faithful reconstruction until after 1 mins 45 secs enters loop of repeatedly lifting left leg
+8300: faithful reconstruction until after 1 mins 0 secs enters loop of repeatedly lifting left leg
+8800: faithful reconstruction until after 0 mins 15 secs enters loop of repeatedly lifting left leg
+9300: stangnation aftere 20 secs
+9800: after 1 mins 0 secs: semi-periodic  hand waving
+10300: shakey (avoid) and quick stagnation
+10800: periodic bending and hand waving
+11300: stangnation after 30 secs
+11800: semi-periodic rotation around vertical body axis, stagnation after 2 mins
+12300: somewhat shaky, stagnation after 40 secs
+12800: becomes very slow after 50 secs, stagnation after ca. 2 mins
+13300: shakey, stagnation after 30 secs
+13800: shakey, stagnation after 30 secs
+14300: cool, stagnation after 1 mins 30 secs.
+14800: stagnation after 0 mins 40 secs.
+15300: very shaky, stagnation after 0 mins 10 secs.
+16300: nice walking animation (seems to run forever)
+16800: very shape and quick stagnation
+
+CryingHoise_AoiSolo_take001_chr00
+0: 

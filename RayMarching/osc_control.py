@@ -170,6 +170,12 @@ class OscControl():
         if self.skeleton.skeletonMode == SkeletonMode.Avatar or self.skeleton.skeletonMode == SkeletonMode.SnakeAvatar or self.skeleton.skeletonMode == SkeletonMode.Hand :
             # right handed to left handed
             tmp = np.copy(positions)
+
+            """
+            positions[:, 0] = tmp[:, 0] / 100.0
+            positions[:, 1] = tmp[:, 1] / 100.0
+            positions[:, 2] = tmp[:, 2] / 100.0
+            """
             
             positions[:, 0] = tmp[:, 1] / 100.0
             positions[:, 1] = tmp[:, 0] / 100.0
@@ -201,6 +207,13 @@ class OscControl():
             tmp = np.copy(rotations)
             
             #print("rotations 0 ", rotations[0])
+
+            """
+            rotations[:, 0] = tmp[:, 0]
+            rotations[:, 1] = tmp[:, 1]
+            rotations[:, 2] = tmp[:, 2]
+            rotations[:, 3] = tmp[:, 3]
+            """
 
             rotations[:, 0] = tmp[:, 0]
             rotations[:, 1] = tmp[:, 2]

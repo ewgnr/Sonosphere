@@ -135,10 +135,10 @@ Setup Visualization
 
 vertex_file_path = "shaderVert.glsl"
 fragment_file_path = "shaderFrag.glsl"
-#window_size = [1280, 720]
+window_size = [1280, 720]
 #window_size = [1920, 1080]
 #window_size = [640, 360]
-window_size = [720, 405]
+#window_size = [720, 405]
 #window_size = [96, 54]
 
 with open(vertex_file_path) as f:
@@ -154,7 +154,7 @@ Osc Control
 """
 
 #oscControl = OscControl(skeleton, visualization, "127.0.0.1", 10000)
-oscControl = OscControl(skeleton, visualization, "0.0.0.0", 9005)
+oscControl = OscControl(skeleton, visualization, "0.0.0.0", 9004)
 oscControl.start()
 
 oscControl.fix_root = True
