@@ -1,4 +1,4 @@
-# Sonosphere - Spherical Sound Player MacOS Version
+# Sonosphere - Spherical Sound Player Windows Version
 
 ![SphericalSoundPlayer_Screenshot](data/media/SphericalSoundPlayer_Screenshot.jpg)
 
