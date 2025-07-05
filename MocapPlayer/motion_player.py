@@ -57,6 +57,7 @@ class MotionPlayer():
             hip_pos_world = np.repeat(hip_pos_world, pos_world.shape[1], axis=1)
             pos_world = pos_world - hip_pos_world
 
+        """
         # swap coordinates
         pos_world_x = np.copy(pos_world[:,:,0])
         pos_world_y = np.copy(pos_world[:,:,1])
@@ -69,7 +70,7 @@ class MotionPlayer():
         pos_world *= config["joint_pos_scale"]
             
         self.mocap_data["motion"]["pos_world"] = pos_world
-        
+        """
         
         # update start, end, and play position
         self.play_frame = 0

@@ -313,16 +313,16 @@ class MotionGui(QtWidgets.QWidget):
     def update_osc(self):
         
         osc_values = np.reshape(self.player_pose_lpos, (-1)).tolist()
-        self.sender.send("/mocap/0/joint/pos_local", osc_values) 
+        self.sender.send("/mocap/joint/pos_local", osc_values) 
         
         osc_values = np.reshape(self.player_pose_lrot, (-1)).tolist()
-        self.sender.send("/mocap/0/joint/rot_local", osc_values) 
+        self.sender.send("/mocap/joint/rot_local", osc_values) 
             
         osc_values = np.reshape(self.player_pose_wpos, (-1)).tolist()
-        self.sender.send("/mocap/0/joint/pos_world", osc_values) 
+        self.sender.send("/mocap/joint/pos_world", osc_values) 
             
         osc_values = np.reshape(self.player_pose_wrot, (-1)).tolist()
-        self.sender.send("/mocap/0/joint/rot_world", osc_values) 
+        self.sender.send("/mocap/joint/rot_world", osc_values) 
 
 
     def update_seq_plot(self):

@@ -32,3 +32,11 @@
 /RayMarching_v2/.spyproject
 /RayMarching_v2/__pycache__
 /RayMarching_v2/common/__pycache__
+/Data/audio
+/SphericalSoundfilePlayer_v1_13_Win/ofxDabBase/example/obj
+/SphericalSoundfilePlayer_v1_13_Win/obj
+/SphericalSoundfilePlayer_v1_13_Win/.vs
+SphericalSoundfilePlayer_v1_13_Win/SphericalSoundfilePlayer_v1_13_Win.sln
+SphericalSoundfilePlayer_v1_13_Win/SphericalSoundfilePlayer_v1_13_Win.vcxproj
+SphericalSoundfilePlayer_v1_13_Win/SphericalSoundfilePlayer_v1_13_Win.vcxproj.filters
+SphericalSoundfilePlayer_v1_13_Win/SphericalSoundfilePlayer_v1_13_Win.vcxproj.user
