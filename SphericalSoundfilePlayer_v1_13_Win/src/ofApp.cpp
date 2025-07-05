@@ -33,9 +33,9 @@ void ofApp::setup()
     inst_GUI->addToggle("METRONOME_TRIGGER", false);
     inst_GUI->addToggle("GRAIN_SHUFFLE", false);
     inst_GUI->addDropdown("SELECT_WINDOW_FUNCTION", windows);
-    inst_GUI->addTextInput("SELECT_FOLDER", "0");
-    inst_GUI->addTextInput("X_RES", "2")->setInputType(ofxDatGuiInputType::NUMERIC);
-    inst_GUI->addTextInput("Y_RES", "2")->setInputType(ofxDatGuiInputType::NUMERIC);
+    inst_GUI->addTextInput("SELECT_FOLDER", "0")->setInputType(ofxDatGuiInputType::NUMERIC);
+    inst_GUI->addTextInput("X_RES", "10")->setInputType(ofxDatGuiInputType::NUMERIC);
+    inst_GUI->addTextInput("Y_RES", "10")->setInputType(ofxDatGuiInputType::NUMERIC);
     inst_GUI->addButton("REBUILD_SPHERE");
 
     inst_GUI->onSliderEvent(this, &ofApp::onSliderEvent);
@@ -48,7 +48,7 @@ void ofApp::setup()
     presetControl_GUI = new ofxDatGui(ofxDatGuiAnchor::BOTTOM_LEFT);
     presetControl_GUI->addToggle("UNLOCK_PRESET");
     presetControl_GUI->addButton("READ_WRITE_PRST");
-    presetControl_GUI->addTextInput("SEL_PRST_NR");
+    presetControl_GUI->addTextInput("SEL_PRST_NR")->setInputType(ofxDatGuiInputType::NUMERIC);
 
     presetControl_GUI->onToggleEvent(this, &ofApp::onToggleEvent);
     presetControl_GUI->onButtonEvent(this, &ofApp::onButtonEvent);
@@ -338,46 +338,47 @@ void ofApp::triggerAudio(std::vector<std::size_t> pCollisionIndices)
 
     if (METRONOME_TRIGGER)
     {
-        for (std::size_t colIndex : pCollisionIndices)
+        mAudioPlayerMetro.setFrequency(METRO_FREQUENCY);
+
+        if (mAudioPlayerMetro.tick())
         {
-            mAudioPlayerMetro.setFrequency(METRO_FREQUENCY);
+            mAudioGrains.erase(
+                std::remove_if(mAudioGrains.begin(), mAudioGrains.end(),
+                    [](const Grain& grain) {
+                        return !grain.player || !grain.player->isPlaying();
+                    }),
+                mAudioGrains.end()
+                );
 
-            if (mAudioPlayerMetro.tick())
+            for (std::size_t colIndex : pCollisionIndices)
             {
-                mAudioGrains.erase(
-                    std::remove_if(mAudioGrains.begin(), mAudioGrains.end(),
-                        [](const Grain& grain) {
-                            return !grain.player || !grain.player->isPlaying();
-                         }),
-                    mAudioGrains.end()
-                    );
+                if (mAudioGrains.size() >= MAX_GRAINS)
+                    break;
 
-                if (mAudioGrains.size() < MAX_GRAINS)
+                auto it = std::find_if(mVertexMappings.begin(), mVertexMappings.end(),
+                    [colIndex](const VertexMapping& vm) {
+                        return vm.vertexIndex == colIndex;
+                    });
+
+                if (it != mVertexMappings.end() && it->player)
                 {
-                    auto it = std::find_if(mVertexMappings.begin(), mVertexMappings.end(),
-                        [colIndex](const VertexMapping& vm) {
-                            return vm.vertexIndex == colIndex;
-                        });
+                    Grain grain;
+                    grain.player = std::make_shared<sfPlayer>(*(it->player));
+                    grain.position = it->position;
 
-                    if (it != mVertexMappings.end() && it->player)
-                    {
-                        Grain grain;
-                        grain.player = std::make_shared<sfPlayer>(*(it->player));
-                        grain.position = it->position; // or use vm.position
-
-                        grain.player->start(playbackSpeed, SAMPLE_POS_START, SAMPLE_POS_END);
-                        mAudioGrains.push_back(grain);
-                    }
-                    else
-                    {
-                        ofLogWarning() << "No valid grain player for collision index " << colIndex;
-                    }
+                    float playbackSpeed = ofRandom(PITCH_RAND_MIN, PITCH_RAND_MAX);
+                    grain.player->start(playbackSpeed, SAMPLE_POS_START, SAMPLE_POS_END);
+                    mAudioGrains.push_back(grain);
                 }
-
-                if (GRAIN_SHUFFLE)
+                else
                 {
-                    std::shuffle(mAudioGrains.begin(), mAudioGrains.end(), std::default_random_engine{});
+                    ofLogWarning() << "No valid grain player for collision index " << colIndex;
                 }
+            }
+
+            if (GRAIN_SHUFFLE)
+            {
+                std::shuffle(mAudioGrains.begin(), mAudioGrains.end(), std::default_random_engine{});
             }
         }
     }

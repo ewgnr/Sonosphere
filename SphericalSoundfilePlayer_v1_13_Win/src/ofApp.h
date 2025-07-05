@@ -19,7 +19,7 @@ constexpr unsigned int mAudioBufferSize = 1024;
 constexpr unsigned int mAudioNumOutputChannels = 2;
 
 constexpr bool TEST_TRIGGER = false;
-constexpr bool RNN_MOTION_CONTINUATION = false;
+constexpr bool RNN_MOTION_CONTINUATION = true;
 
 constexpr std::size_t MAX_GRAINS = 300;
 constexpr std::size_t MAX_COL_POINTS = 20;
