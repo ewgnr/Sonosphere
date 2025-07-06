@@ -3,6 +3,11 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
+    ofSetLogLevel(OF_LOG_VERBOSE);
+    ofSetLoggerChannel(std::make_shared<ofConsoleLoggerChannel>());
+
+    ofBackground(0);
+
     selectAudioDevice();
 
     sphere = std::make_unique<uvSphere>(10, 10, 1.0f);
@@ -21,7 +26,7 @@ void ofApp::setup()
     std::size_t vertexCount = vertices.size();
 
     inst_GUI = new ofxDatGui(ofxDatGuiAnchor::TOP_LEFT);
-    inst_GUI->addSlider(inst_GUI_FaderNames[0], 0.001, 2000.0, 1.0)->setPrecision(7);
+    inst_GUI->addSlider(inst_GUI_FaderNames[0], 0.001, 20.0, 1.0)->setPrecision(7);
     inst_GUI->addSlider(inst_GUI_FaderNames[1], 0.001, 12.0, 1.0)->setPrecision(7);
     inst_GUI->addSlider(inst_GUI_FaderNames[2], 0.001, 12.0, 1.0)->setPrecision(7);
     inst_GUI->addSlider(inst_GUI_FaderNames[3], 0.0, 1.0, 0.0)->setPrecision(7);
@@ -36,14 +41,12 @@ void ofApp::setup()
     inst_GUI->addTextInput("SELECT_FOLDER", "0")->setInputType(ofxDatGuiInputType::NUMERIC);
     inst_GUI->addTextInput("X_RES", "10")->setInputType(ofxDatGuiInputType::NUMERIC);
     inst_GUI->addTextInput("Y_RES", "10")->setInputType(ofxDatGuiInputType::NUMERIC);
-    inst_GUI->addButton("REBUILD_SPHERE");
 
     inst_GUI->onSliderEvent(this, &ofApp::onSliderEvent);
     inst_GUI->onDropdownEvent(this, &ofApp::onDropdownEvent);
     inst_GUI->onToggleEvent(this, &ofApp::onToggleEvent);
     inst_GUI->onButtonEvent(this, &ofApp::onButtonEvent);
     inst_GUI->onTextInputEvent(this, &ofApp::onTextInputEvent);
-    inst_GUI->onButtonEvent(this, &ofApp::onButtonEvent);
 
     presetControl_GUI = new ofxDatGui(ofxDatGuiAnchor::BOTTOM_LEFT);
     presetControl_GUI->addToggle("UNLOCK_PRESET");
@@ -76,19 +79,21 @@ void ofApp::setup()
         mVertexMappings.push_back(vm);
     }
 
-    cam.setDistance(300);
+    cam.setDistance(500);
     cam.removeAllInteractions();
     cam.addInteraction(ofEasyCam::TRANSFORM_ROTATE, OF_MOUSE_BUTTON_RIGHT);
     cam.setLensOffset(ofVec2f(-0.3, 0));
 
     setupOsc();
 
-    loadSoundFolderByIndex(0);
+    loadSoundFolderByIndex(0, false);
 }
 
 //--------------------------------------------------------------
-void ofApp::rebuildSphere(int xRes, int yRes) 
+void ofApp::rebuildSphere(int xRes, int yRes)
 {
+    vertexLoader.stop(); // stop async loading safely before deleting GUI
+
     sphere = std::make_unique<uvSphere>(xRes, yRes, 1.0f);
 
     delete mesh_GUI;
@@ -113,7 +118,11 @@ void ofApp::rebuildSphere(int xRes, int yRes)
         mVertexMappings.push_back(vm);
     }
 
-    loadSoundFolderByIndex(currentLoadedFolderIndex);
+    /*
+    if (currentLoadedFolderIndex >= 0) {
+        loadSoundFolderByIndex(currentLoadedFolderIndex, true);
+    }
+    */
 
     ofLogNotice() << "[rebuildSphere] Rebuilt with " << vertices.size() << " vertices.";
 }
@@ -318,9 +327,11 @@ void ofApp::triggerAudio(std::vector<std::size_t> pCollisionIndices)
 
             bool isNewCollision = std::find(mCollisionIndicesBefore.begin(), mCollisionIndicesBefore.end(), colIndex) == mCollisionIndicesBefore.end();
 
+            /*
             if (RETRIGGER_AT_INDEX) {
                 player->start(playbackSpeed, SAMPLE_POS_START, SAMPLE_POS_END);
             }
+            */
 
             if (RETRIGGER_AT_INDEX && isNewCollision)
             {
@@ -400,7 +411,10 @@ void ofApp::drawAudioTrigger(const std::vector<std::size_t>& collisionIndices)
                 float scale = ofToFloat(mapping.guiInput->getText());
                 glm::vec3 pos = glm::normalize(mapping.position) * scale;
 
+                ofPushStyle();
+                ofSetColor(0, 255, 0, 100);
                 ofDrawSphere(pos, 5.0f);
+                ofPopStyle();
             }
         }
     }
@@ -463,7 +477,7 @@ void ofApp::draw()
     }
 
     ofPushStyle();
-    ofSetColor(0, 255, 120);
+    ofSetColor(0, 255, 255);
     for (auto jointPos : mJointPositions)
     {
         ofDrawSphere(jointPos, 1.0);
@@ -601,18 +615,19 @@ void ofApp::writeFileToDisk(const std::vector<double>& pSampleBuffer)
 }
 
 //--------------------------------------------------------------
-void ofApp::loadSoundFolderByIndex(int index) {
+void ofApp::loadSoundFolderByIndex(int index, bool forceReload = false) {
     if (index < 0 || index >= availableAudioFolders.size()) {
         ofLogWarning() << "[loadSoundFolderByIndex] Invalid index: " << index;
         return;
     }
 
-    if (index == currentLoadedFolderIndex) {
+    if (!forceReload && index == currentLoadedFolderIndex) {
         ofLogNotice() << "[loadSoundFolderByIndex] Folder index " << index << " is already loaded.";
         return;
     }
 
     std::string folderName = availableAudioFolders[index];
+
     std::string folderPath = "data/" + folderName;
     std::vector<std::string> filePaths = directoryIterator(folderPath);
 
@@ -622,6 +637,7 @@ void ofApp::loadSoundFolderByIndex(int index) {
     }
 
     std::vector<VertexLoadTask> tasks;
+
     for (std::size_t i = 0; i < mVertexMappings.size(); ++i) {
         if (i < filePaths.size()) {
             std::string relPath = folderName + "/" + filePaths[i];
@@ -634,6 +650,7 @@ void ofApp::loadSoundFolderByIndex(int index) {
     currentLoadedFolderIndex = index;
     ofLogNotice() << "[loadSoundFolderByIndex] Loaded folder: " << folderName;
 }
+
 
 
 //--------------------------------------------------------------
@@ -761,7 +778,7 @@ void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e)
     if (e.target->is("SELECT_FOLDER")) {
         try {
             int index = std::stoi(e.text);
-            loadSoundFolderByIndex(index);
+            loadSoundFolderByIndex(index, false);
         }
         catch (const std::exception& ex) {
             ofLogWarning() << "[onTextInputEvent] Invalid index input: " << e.text;
@@ -786,17 +803,6 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e)
     {
         readGuiValuesFromFile(mGuiSelectPresetNumber);
     }
-
-    if (e.target->getLabel() == "REBUILD_SPHERE") 
-    {
-        auto xResInput = inst_GUI->getTextInput("X_RES");
-        auto yResInput = inst_GUI->getTextInput("Y_RES");
-
-        int xRes = ofToInt(xResInput->getText());
-        int yRes = ofToInt(yResInput->getText());
-
-        rebuildSphere(xRes, yRes);
-    }
 }
 
 //--------------------------------------------------------------
@@ -804,29 +810,23 @@ void ofApp::saveGuiValuesAsFile(const std::string& presetNumber)
 {
     ofJson json;
 
-    // Save sliders
     for (const auto& name : inst_GUI_FaderNames)
     {
         json["inst_GUI"][name] = inst_GUI->getSlider(name)->getValue();
     }
 
-    // Save toggles
     json["inst_GUI"]["RETRIGGER_AT_INDEX"] = inst_GUI->getToggle("RETRIGGER_AT_INDEX")->getChecked();
     json["inst_GUI"]["RETRIGGER_AT_END"] = inst_GUI->getToggle("RETRIGGER_AT_END")->getChecked();
     json["inst_GUI"]["METRONOME_TRIGGER"] = inst_GUI->getToggle("METRONOME_TRIGGER")->getChecked();
     json["inst_GUI"]["GRAIN_SHUFFLE"] = inst_GUI->getToggle("GRAIN_SHUFFLE")->getChecked();
 
-    // Save dropdown (store selected label)
     json["inst_GUI"]["SELECT_WINDOW_FUNCTION"] = inst_GUI->getDropdown("SELECT_WINDOW_FUNCTION")->getSelected()->getLabel();
 
-    // Save text input
     json["inst_GUI"]["SELECT_FOLDER"] = inst_GUI->getTextInput("SELECT_FOLDER")->getText();
 
-    // Save sphere resulution input
     json["inst_GUI"]["X_RES"] = inst_GUI->getTextInput("X_RES")->getText();
     json["inst_GUI"]["Y_RES"] = inst_GUI->getTextInput("Y_RES")->getText();
 
-    // Save mesh GUI vertex inputs
     for (size_t i = 0; i < mVertexMappings.size(); ++i)
     {
         json["mesh_GUI"]["Vertex_" + ofToString(i)] = mVertexMappings[i].guiInput->getText();
@@ -885,26 +885,38 @@ void ofApp::readGuiValuesFromFile(const std::string& presetNumber)
         inst_GUI->getToggle("GRAIN_SHUFFLE")->setChecked(checked);
         GRAIN_SHUFFLE = checked;
     }
-
-    /*
+   
     if (json["inst_GUI"].contains("SELECT_WINDOW_FUNCTION"))
     {
         std::string label = json["inst_GUI"]["SELECT_WINDOW_FUNCTION"];
         auto dropdown = inst_GUI->getDropdown("SELECT_WINDOW_FUNCTION");
-        auto options = dropdown->getOptions();
-        for (int i = 0; i < options.size(); ++i)
-        {
-            if (options[i]->getLabel() == label)
+
+        if (dropdown) {
+            int n = dropdown->size();
+            bool found = false;
+
+            for (int i = 0; i < n; ++i)
             {
-                dropdown->select(i);
-                inst_GUI_SelectWindow = i;
-                inst_WindowType = static_cast<WindowFunction::Type>(i);
-                break;
+                auto option = dropdown->getChildAt(i);
+                if (option && option->getLabel() == label)
+                {
+                    dropdown->select(i);
+                    inst_GUI_SelectWindow = i;
+                    inst_WindowType = static_cast<WindowFunction::Type>(i);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                ofLogWarning() << "[SELECT_WINDOW_FUNCTION] Label not found: " << label;
             }
         }
+        else
+        {
+            ofLogWarning() << "[SELECT_WINDOW_FUNCTION] Dropdown not found.";
+        }
     }
-    */
-
     if (json["inst_GUI"].contains("X_RES") && json["inst_GUI"].contains("Y_RES"))
     {
         std::string xResInput = json["inst_GUI"]["X_RES"].get<std::string>();
@@ -915,7 +927,12 @@ void ofApp::readGuiValuesFromFile(const std::string& presetNumber)
         int xRes = ofToInt(xResInput);
         int yRes = ofToInt(yResInput);
 
-        rebuildSphere(xRes, yRes);
+        if (xRes != currentXRes || yRes != currentYRes)
+        {
+            rebuildSphere(xRes, yRes);
+            currentXRes = xRes;
+            currentYRes = yRes;
+        }
     }
 
     for (size_t i = 0; i < mVertexMappings.size(); ++i)
@@ -931,22 +948,28 @@ void ofApp::readGuiValuesFromFile(const std::string& presetNumber)
 
     sphere->buildMeshWithInputs(mVertexMappings);
 
-    currentLoadedFolderIndex = -1;
-
     if (json["inst_GUI"].contains("SELECT_FOLDER"))
     {
         std::string folderText = json["inst_GUI"]["SELECT_FOLDER"];
+
+        std::cout << "folderText " << folderText << "\n";
+
         inst_GUI->getTextInput("SELECT_FOLDER")->setText(folderText);
 
         try {
             int index = std::stoi(folderText);
-            loadSoundFolderByIndex(index);
+            loadSoundFolderByIndex(index, false); 
         }
         catch (const std::exception& ex) {
             ofLogWarning() << "[readGuiValuesFromFile] Invalid folder index in preset: " << folderText;
         }
     }
+    else
+    {
+        ofLogNotice() << "[readGuiValuesFromFile] No SELECT_FOLDER found in preset.";
+    }
 }
+
 
 //--------------------------------------------------------------
 void ofApp::exit()

@@ -178,6 +178,28 @@
 
 			}
 ,
+			"60" : 			{
+				"id" : 60,
+				"data" : 				{
+					"input_sequence_start" : [ 64 ],
+					"input_sequence_start[1]" : [ 5 ],
+					"input_sequence_start[3]" : [ 5 ],
+					"joint_index" : [ 2 ],
+					"joint_index[1]" : [ 2 ],
+					"occlusionResol" : [ 1.0 ],
+					"occlusionResol[1]" : [ 1.0 ],
+					"rot_repeat" : [ 0 ],
+					"rot_repeat[6]" : [ 0 ],
+					"rotaxis_x" : [ 1.0 ],
+					"rotaxis_x[1]" : [ 0.0 ],
+					"rotaxis_y" : [ 0.0 ],
+					"rotaxis_y[1]" : [ 1.0 ],
+					"rotaxis_z" : [ 0.0 ],
+					"rotaxis_z[1]" : [ 0.0 ]
+				}
+
+			}
+,
 			"100" : 			{
 				"id" : 100,
 				"data" : 				{

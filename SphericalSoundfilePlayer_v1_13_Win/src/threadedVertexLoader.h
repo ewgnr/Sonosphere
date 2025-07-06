@@ -25,6 +25,15 @@ public:
         startThread();
     }
 
+    void stop() {
+        std::lock_guard<std::mutex> lock(mutex);
+        if (isThreadRunning()) {
+            stopThread();
+            waitForThread();
+            loading = false;
+        }
+    }
+
     void threadedFunction() override {
         std::vector<std::pair<int, std::shared_ptr<sfPlayer>>> tempResults;
 

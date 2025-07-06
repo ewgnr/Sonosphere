@@ -21,7 +21,7 @@ constexpr unsigned int mAudioNumOutputChannels = 2;
 constexpr bool TEST_TRIGGER = false;
 constexpr bool RNN_MOTION_CONTINUATION = true;
 
-constexpr std::size_t MAX_GRAINS = 300;
+constexpr std::size_t MAX_GRAINS = 150;
 constexpr std::size_t MAX_COL_POINTS = 20;
 constexpr std::size_t RADIUS = 100;
 
@@ -93,7 +93,7 @@ public:
         return std::all_of(str.begin(), str.end(), ::isdigit);
     }
 
-    void loadSoundFolderByIndex(int index);
+    void loadSoundFolderByIndex(int index, bool forceReload);
     std::vector<std::string> availableAudioFolders;
     int currentLoadedFolderIndex = -1;
 
@@ -115,12 +115,14 @@ private:
     int inst_GUI_SelectWindow = 0;
     WindowFunction::Type inst_WindowType = WindowFunction::Type::HANN;
 
-    std::vector<std::string> inst_GUI_FaderNames = {
+    std::vector<std::string> inst_GUI_FaderNames = 
+    {
         "METRO_FREQUENCY", "PITCH_RAND_MIN", "PITCH_RAND_MAX",
         "SAMPLE_POS_START", "SAMPLE_POS_END", "MIN_COL_DISTANCE"
     };
 
-    std::vector<std::string> windows = {
+    std::vector<std::string> windows = 
+    {
         "HANN", "BARTLETT", "TRIANGLE", "HAMMING",
         "BLACKMAN", "BLACKMAN_HARRIS", "NUTTALL", "FLAT_TOP"
     };
@@ -215,4 +217,7 @@ private:
 
     // Misc
     std::shared_ptr<ofApp> mSelf;
+
+    int currentXRes = 10;
+    int currentYRes = 10;
 };
