@@ -1,0 +1,63 @@
+﻿  main.cpp
+  ofApp.cpp
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(326,20): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(331,20): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(912,11): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(913,11): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(914,11): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(915,11): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(326,20): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(331,20): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(912,11): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(913,11): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(914,11): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(915,11): warning C4267: "Argument": Konvertierung von "size_t" nach "int", Datenverlust möglich
+LINK : warning LNK4075: /INCREMENTAL wird aufgrund der Angabe von /FORCE ignoriert.
+  Azure_osc_sphericalInstrument_player.vcxproj -> C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\Azure_osc_sphericalInstrument_player_debug.exe
+  
+  	                   2	C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\fmod\lib\vs\x64\
+  	  *EXTRA Datei		142537144	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cublas64_11.dll
+  	  *EXTRA Datei		282045352	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cublasLt64_11.dll
+  	  *EXTRA Datei		  512424	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cudart64_110.dll
+  	  *EXTRA Datei		  233920	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cudnn64_8.dll
+  	  *EXTRA Datei		629642688	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cudnn_cnn_infer64_8.dll
+  	  *EXTRA Datei		362977712	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cudnn_ops_infer64_8.dll
+  	  *EXTRA Datei		361533864	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cufft64_10.dll
+  	  *EXTRA Datei		  407472	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\depthengine_2_0.dll
+  	  *EXTRA Datei		 9487256	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\directml.dll
+  	  *EXTRA Datei		 6942208	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\FreeImage.dll
+  	  *EXTRA Datei		  634288	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\k4a.dll
+  	  *EXTRA Datei		 4519856	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\k4abt.dll
+  	  *EXTRA Datei		 1612224	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\k4arecord.dll
+  	  *EXTRA Datei		361680016	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\nvinfer.dll
+  	  *EXTRA Datei		26050704	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\nvinfer_plugin.dll
+  	  *EXTRA Datei		 7072200	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\nvrtc-builtins64_114.dll
+  	  *EXTRA Datei		32611752	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\nvrtc64_112_0.dll
+  	  *EXTRA Datei		11994544	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\onnxruntime.dll
+  	  *EXTRA Datei		254585248	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\onnxruntime_providers_cuda.dll
+  	  *EXTRA Datei		   19864	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\onnxruntime_providers_shared.dll
+  	  *EXTRA Datei		 1879472	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\onnxruntime_providers_tensorrt.dll
+  
+  	                   1	C:\Users\aaron\Documents\of_v0.12.0_vs_release\libs\FreeImage\lib\vs\x64\
+  	  *EXTRA Datei		142537144	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cublas64_11.dll
+  	  *EXTRA Datei		282045352	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cublasLt64_11.dll
+  	  *EXTRA Datei		  512424	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cudart64_110.dll
+  	  *EXTRA Datei		  233920	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cudnn64_8.dll
+  	  *EXTRA Datei		629642688	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cudnn_cnn_infer64_8.dll
+  	  *EXTRA Datei		362977712	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cudnn_ops_infer64_8.dll
+  	  *EXTRA Datei		361533864	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\cufft64_10.dll
+  	  *EXTRA Datei		  407472	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\depthengine_2_0.dll
+  	  *EXTRA Datei		 9487256	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\directml.dll
+  	  *EXTRA Datei		 1826304	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\fmod.dll
+  	  *EXTRA Datei		 2041856	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\fmodL.dll
+  	  *EXTRA Datei		  634288	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\k4a.dll
+  	  *EXTRA Datei		 4519856	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\k4abt.dll
+  	  *EXTRA Datei		 1612224	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\k4arecord.dll
+  	  *EXTRA Datei		361680016	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\nvinfer.dll
+  	  *EXTRA Datei		26050704	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\nvinfer_plugin.dll
+  	  *EXTRA Datei		 7072200	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\nvrtc-builtins64_114.dll
+  	  *EXTRA Datei		32611752	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\nvrtc64_112_0.dll
+  	  *EXTRA Datei		11994544	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\onnxruntime.dll
+  	  *EXTRA Datei		254585248	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\onnxruntime_providers_cuda.dll
+  	  *EXTRA Datei		   19864	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\onnxruntime_providers_shared.dll
+  	  *EXTRA Datei		 1879472	C:\Users\aaron\Documents\of_v0.12.0_vs_release\apps\Azure_osc_sphericalInstrument_V2\bin\onnxruntime_providers_tensorrt.dll
