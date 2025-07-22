@@ -14,15 +14,15 @@ Open Frameworks Program for skeleton tracking for the Microsoft Kinect AZURE.
 
 * **install Azure Kinect SDK v1.4.2**
   
-  <a href=https://www.microsoft.com/en-sg/download/details.aspx?id=106121">Azure Kinect SDK v1.4.2</a>
+  <a href="https://www.microsoft.com/en-sg/download/details.aspx?id=106121">Azure Kinect SDK v1.4.2</a>
 
 * **install Azure Kinect Body Tracking SDK**
   
-  <a href=https://www.microsoft.com/en-us/download/details.aspx?id=104221">Azure Kinect Body Tracking SDK</a>
+  <a href="https://www.microsoft.com/en-us/download/details.aspx?id=104221">Azure Kinect Body Tracking SDK</a>
 
 * **add ofxAzureKinect to the Open Frameworks addon folder**
   
-  <a href=https://github.com/prisonerjohn/ofxAzureKinect">ofxAzureKinect</a>
+  <a href="https://github.com/prisonerjohn/ofxAzureKinect">ofxAzureKinect</a>
 
 * **include header files and lib files from both SDKs**
   
