@@ -1,6 +1,6 @@
 # AzureOsc_v2_1
 
-*AzureOsc* Open Frameworks Program for skeleton tracking for the Microsoft Kinect AZURE.
+Open Frameworks Program for skeleton tracking for the Microsoft Kinect AZURE.
 * <a href="https://openframeworks.cc/">Open Frameworks</a>
 
 
@@ -14,15 +14,15 @@
 
 * **install Azure Kinect SDK v1.4.2**
   
-  <a href=https://www.microsoft.com/en-sg/download/details.aspx?id=106121>Azure Kinect SDK v1.4.2</a>
+  <a href=https://www.microsoft.com/en-sg/download/details.aspx?id=106121">Azure Kinect SDK v1.4.2</a>
 
 * **install Azure Kinect Body Tracking SDK**
   
-  <a href=https://www.microsoft.com/en-us/download/details.aspx?id=104221>Azure Kinect Body Tracking SDK</a>
+  <a href=https://www.microsoft.com/en-us/download/details.aspx?id=104221">Azure Kinect Body Tracking SDK</a>
 
 * **add ofxAzureKinect to the Open Frameworks addon folder**
   
-  <a href=https://github.com/prisonerjohn/ofxAzureKinect>ofxAzureKinect</a>
+  <a href=https://github.com/prisonerjohn/ofxAzureKinect">ofxAzureKinect</a>
 
 * **include header files and lib files from both SDKs**
   
@@ -58,6 +58,6 @@ This work is licensed under Creative Commons Attribution-Noncommercial 4.0 Inter
 * No warranties are given. The license may not give you all of the permissions necessary for your intended use. For example, other rights such as publicity, privacy, or moral rights may limit how you use the material.
 
 ## Authors
-* <a href="https://github.com/aaronbue>Aaron Buehler</a>
+* <a href="https://github.com/aaronbue">Aaron Buehler</a>
 * <a href="https://github.com/bisnad">Daniel Bisig</a>
 * <a href="https://github.com/ewgnr">Ephraim Wegner</a>
