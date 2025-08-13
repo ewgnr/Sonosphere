@@ -1,4 +1,4 @@
-# AzureOsc_v2_1
+# AzureOsc_v2_1_CPU
 
 Open Frameworks Program for skeleton tracking for the Microsoft Kinect AZURE.
 * <a href="https://openframeworks.cc/">Open Frameworks</a>
