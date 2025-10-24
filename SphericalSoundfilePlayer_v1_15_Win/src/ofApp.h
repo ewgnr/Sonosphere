@@ -13,10 +13,13 @@
 
 #include <atomic>
 #include <memory>
+#include <filesystem>
+#include <algorithm>
+#include <mutex>
+#include <deque>
 
 constexpr unsigned int mAudioSampleRate = 48000;
 constexpr unsigned int mAudioBufferSize = 1024;
-constexpr unsigned int mAudioNumOutputChannels = 2;
 
 constexpr bool TEST_TRIGGER = false;
 
@@ -28,38 +31,78 @@ class ofApp : public ofBaseApp, public dab::OscListener
 {
 public:
     // Core openFrameworks methods
-    void setup();
-    void update();
-    void draw();
-    void exit();
-    void keyPressed(int key);
-    void audioOut(ofSoundBuffer& outBuffer);
+    void setup() override;
+    void update() override;
+    void draw() override;
+    void exit() override;
+    void keyPressed(int key) override;
+    void audioOut(ofSoundBuffer& outBuffer) override;
 
     // Audio / collision
     void selectAudioDevice();
     void startAudioBackend();
     void triggerAudio(std::vector<std::size_t> pCollisionIndices);
     void detectJointCollisions(const std::vector<glm::vec3>& pJointPositions);
-    void drawAudioTrigger(const std::vector<std::size_t>& collisionIndices);
+    void clearAllAudio();
 
     // OSC Communication 
     void setupOsc() throw(dab::Exception);
-    void notify(std::shared_ptr<dab::OscMessage> pMessage);
+    void notify(std::shared_ptr<dab::OscMessage> pMessage) override;
     void updateOsc();
-    void updateOsc(std::shared_ptr<dab::OscMessage> pMessage);
+    void handleOscMessage(std::shared_ptr<dab::OscMessage> pMessage);
+    void handleMocapJointMessage(const std::vector<dab::_OscArg*>& arguments);
+    void handleBoidPositions(const std::vector<dab::_OscArg*>& arguments);
+    void handleImuMessage(const std::vector<dab::_OscArg*>& arguments);
+    void handleAudioPresetMessage(const std::vector<dab::_OscArg*>& arguments);
     void updateOscSender() throw(dab::Exception);
 
     // File I/O
+    void queryInitialOptions();
     void rebuildSphere(int xRes, int yRes);
+    void updatePresetTrigger();
+    void updateMeshLoader();
+    void notifyMeshReady();
     void writeFileSetup(const std::string& pSfNumber);
     void writeFileToBuffer(const double& pInput);
     void writeFileToDisk(const std::vector<double>& pSampleBuffer);
+    void loadSoundFolderByIndex(int index, bool forceReload = false, int xRes = 10, int yRes = 10);
     bool forceFileReload = false;
 
-    std::vector<std::string> directoryIterator(const std::string& pPath)
-    {
+    // GUI Events
+    void setupGui();
+    void onTextInputEvent(ofxDatGuiTextInputEvent e);
+    void onSliderEvent(ofxDatGuiSliderEvent e);
+    void onDropdownEvent(ofxDatGuiDropdownEvent e);
+    void onToggleEvent(ofxDatGuiToggleEvent e);
+    void onButtonEvent(ofxDatGuiButtonEvent e);
+
+    void saveGuiValuesAsFile(const std::string& pGuiSelectPresetNumber);
+    void readGuiValuesFromFile(const std::string& pGuiSelectPresetNumber);
+
+    // Utilities
+    std::string apiToString(ofSoundDevice::Api api) const {
+        switch (api) {
+        case ofSoundDevice::Api::UNSPECIFIED: return "UNSPECIFIED";
+        case ofSoundDevice::Api::DEFAULT:     return "DEFAULT";
+        case ofSoundDevice::Api::ALSA:        return "ALSA";
+        case ofSoundDevice::Api::PULSE:       return "PULSE";
+        case ofSoundDevice::Api::OSS:         return "OSS";
+        case ofSoundDevice::Api::JACK:        return "JACK";
+        case ofSoundDevice::Api::OSX_CORE:    return "OSX_CORE";
+        case ofSoundDevice::Api::MS_WASAPI:   return "MS_WASAPI";
+        case ofSoundDevice::Api::MS_ASIO:     return "MS_ASIO";
+        case ofSoundDevice::Api::MS_DS:       return "MS_DS";
+        default:                              return "UNKNOWN_API";
+        }
+    }
+
+    bool isDigits(const std::string& str) const {
+        return std::all_of(str.begin(), str.end(), ::isdigit);
+    }
+
+    std::vector<std::string> directoryIterator(const std::string& path) const {
         std::vector<std::string> fileNames;
-        for (const auto& entry : std::filesystem::directory_iterator(pPath))
+        for (const auto& entry : std::filesystem::directory_iterator(path))
         {
             if (entry.is_regular_file())
             {
@@ -70,8 +113,7 @@ public:
         return fileNames;
     }
 
-    std::vector<std::string> getFolderNames()
-    {
+    std::vector<std::string> getFolderNames() const {
         std::vector<std::string> folders;
         ofDirectory dir(ofToDataPath("", true));
         dir.listDir();
@@ -88,41 +130,32 @@ public:
         return folders;
     }
 
-    bool isDigits(const std::string& str) 
-    {
-        return std::all_of(str.begin(), str.end(), ::isdigit);
+    std::pair<float, float> getRandomizedGrainBounds(float startNorm, float endNorm, float randStrength) {
+        float grainRangeNorm = endNorm - startNorm;
+        float fullRandomOffset = ofRandom(0.0f, grainRangeNorm);
+        float blendedOffset = fullRandomOffset * randStrength;
+        float grainStartNorm = std::min(startNorm + blendedOffset, endNorm);
+        float grainEndNorm = endNorm;
+
+        return { grainStartNorm, grainEndNorm };
     }
-
-    void loadSoundFolderByIndex(int index, bool forceReload, int xRes, int yRes);
-    std::vector<std::string> availableAudioFolders;
-    int currentLoadedFolderIndex = -1;
-
-    // GUI Events
-    void onTextInputEvent(ofxDatGuiTextInputEvent e);
-    void onSliderEvent(ofxDatGuiSliderEvent e);
-    void onDropdownEvent(ofxDatGuiDropdownEvent e);
-    void onToggleEvent(ofxDatGuiToggleEvent e);
-    void onButtonEvent(ofxDatGuiButtonEvent e);
-
-    void saveGuiValuesAsFile(const std::string& pGuiSelectPresetNumber);
-    void readGuiValuesFromFile(const std::string& pGuiSelectPresetNumber);
 
 private:
     // GUI / Interface
-    ofxDatGui* inst_GUI = nullptr;
-    ofxDatGui* mesh_GUI = nullptr;
-    ofxDatGui* presetControl_GUI = nullptr;
+    std::unique_ptr<ofxDatGui> inst_GUI;
+    std::unique_ptr<ofxDatGui> mesh_GUI;
+    std::unique_ptr<ofxDatGui> presetControl_GUI;
     int inst_GUI_SelectWindow = 0;
     WindowFunction::Type inst_WindowType = WindowFunction::Type::HANN;
 
-    std::vector<std::string> inst_GUI_FaderNames = 
+    std::vector<std::string> inst_GUI_FaderNames =
     {
         "METRO_FREQUENCY", "METRO_JITTER", "PITCH_RAND_MIN", "PITCH_RAND_MAX",
-        "SAMPLE_POS_START", "SAMPLE_POS_END", "RAND_POS_STRENGTH", 
+        "SAMPLE_POS_START", "SAMPLE_POS_END", "RAND_POS_STRENGTH",
         "MIN_COL_DISTANCE"
     };
 
-    std::vector<std::string> windows = 
+    std::vector<std::string> windows =
     {
         "HANN", "BARTLETT", "TRIANGLE", "HAMMING",
         "BLACKMAN", "BLACKMAN_HARRIS", "NUTTALL", "FLAT_TOP"
@@ -132,17 +165,27 @@ private:
     bool mGuiReadOrWritePreset = false;
     std::string mGuiSelectPresetNumber;
 
+    bool pendingPresetLoad = false;
+    std::string pendingPresetStr;
+    bool pendingAudioTrigger = false;
+
     // Audio Engine
+    void triggerAtIndexOrEnd(const std::vector<std::size_t>& indices);
+    void triggerWithMetronome(const std::vector<std::size_t>& indices);
+
     bool loadingFinishedPrinted = false;
 
     std::vector<VertexMapping> mVertexMappings;
+    std::unordered_map<std::size_t, std::size_t> mVertexMap;
     ThreadedVertexLoader vertexLoader;
 
-    struct Grain {
+    struct Grain 
+    {
         std::shared_ptr<sfPlayer> player;
         glm::vec3 position;
     };
     std::vector<Grain> mAudioGrains;
+    std::shared_ptr<ofApp::Grain> createGrainFromVertex(std::size_t index);
 
     Metro mAudioPlayerMetro;
 
@@ -164,22 +207,13 @@ private:
     bool mAudioRecording = false;
     bool mAudioTrigger = true;
     unsigned int mAudioSoundStreamOnOffToggle = 0;
+    unsigned int mAudioTriggerOnOffToggle = 0;
 
     ofSoundStream mSoundStream;
     ofSoundStreamSettings mSettings;
     std::vector<ofSoundDevice> mDevices;
     std::string selInputDevice;
-
-    std::pair<float, float> getRandomizedGrainBounds(float startNorm, float endNorm, float randStrength)
-    {
-        float grainRangeNorm = endNorm - startNorm;
-        float fullRandomOffset = ofRandom(0.0f, grainRangeNorm);
-        float blendedOffset = fullRandomOffset * randStrength;
-        float grainStartNorm = std::min(startNorm + blendedOffset, endNorm);
-        float grainEndNorm = endNorm;
-
-        return { grainStartNorm, grainEndNorm };
-    }
+    unsigned int mAudioNumOutputChannels = 2;
 
     // Ambisonics
     ambiEncode2DThirdOrder mAudioAmbiEncoder;
@@ -190,8 +224,8 @@ private:
     std::size_t mAudioDistanceIndex = 0;
 
     // OSC
-    dab::OscSender* mOscSender = nullptr;
-    dab::OscReceiver* mOscReceiver = nullptr;
+    std::unique_ptr<dab::OscSender> mOscSender;
+    std::unique_ptr<dab::OscReceiver> mOscReceiver;
     std::string mOscSendAddress;
     int mOscSendPort = 0;
 
@@ -203,6 +237,8 @@ private:
     SndfileHandle soundFileBuffer;
     std::vector<double> writeFileSampleBuffer;
     std::vector<std::string> fileNames;
+    std::vector<std::string> availableAudioFolders;
+    int currentLoadedFolderIndex = -1;
 
     // Collision / Motion
     bool USE_IMU_SENSOR = false;
@@ -222,19 +258,30 @@ private:
     std::size_t exitingIndex = 0;
 
     // 3D / Visualization
+    void setupRenderOptions();
+
+    void setupSphere();
+    void drawSphereMesh();
+    void drawAudioTrigger(const std::vector<std::size_t>& collisionIndices);
+    void drawCollisionPoints();
+    void drawImuSensor();
+    void drawBoidPositions();
+    void drawMocapJoints();
     std::unique_ptr<uvSphere> sphere;
-    ofEasyCam cam;
-
-    glm::quat mArduinoQuat;
-    float x = 0.0f, y = 0.0f, z = 0.0f;
-
     bool drawVerticies = true;
     bool drawMesh = true;
     bool drawIndicies = false;
     bool drawExitingPos = true;
     bool meshBuilt = false;
 
+    void setupCamera();
+    ofEasyCam cam;
+
+    glm::quat mArduinoQuat;
+    float x = 0.0f, y = 0.0f, z = 0.0f;
+
     // Misc
+    void setupLogging();
     std::shared_ptr<ofApp> mSelf;
     int currentXRes = 10;
     int currentYRes = 10;

@@ -1,161 +1,95 @@
 ﻿#include "ofApp.h"
 
 //--------------------------------------------------------------
-bool askBool(const std::string& question, bool defaultValue = false)
-{
-    std::string input;
-    std::cout << question << " (y/n) [" << (defaultValue ? "y" : "n") << "]: ";
-    std::getline(std::cin, input);
-
-    if (input.empty())
-        return defaultValue;
-
-    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-    return input == "y" || input == "yes" || input == "1";
-}
-
-//--------------------------------------------------------------
-void ofApp::setup()
+void ofApp::setupLogging()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetLoggerChannel(std::make_shared<ofConsoleLoggerChannel>());
-
-    std::cout << "Select one of the following options:" << std::endl;
-
-    USE_IMU_SENSOR = askBool("Use IMU_SENSOR?", true);
-    USE_BOID_COLLISION = askBool("Use BOID_COLLISION?", false);
-    USE_MOCAP_DATA = askBool("Use MOCAP DATA?", false);
-
-    selectAudioDevice();
-
-    mAudioGrains.reserve(MAX_GRAINS);
-    mAudioAmbiDecoder.resize(mAudioNumOutputChannels);
-
-    availableAudioFolders = getFolderNames();
-
-    if (availableAudioFolders.empty()) {
-        ofLogWarning() << "[setup] No audio folders found inside data/";
-        return;
-    }
-
-    sphere = std::make_unique<uvSphere>(10, 10, 1.0f);
-
-    ofSetVerticalSync(true);
-
-    inst_GUI = new ofxDatGui(ofxDatGuiAnchor::TOP_LEFT);
-    inst_GUI->addSlider(inst_GUI_FaderNames[0], 0.001, 20.0, METRO_FREQUENCY)->setPrecision(7);
-    inst_GUI->addSlider(inst_GUI_FaderNames[1], 0.0, 1.0, METRO_JITTER)->setPrecision(7);
-    inst_GUI->addSlider(inst_GUI_FaderNames[2], 0.001, 12.0, PITCH_RAND_MIN)->setPrecision(7);
-    inst_GUI->addSlider(inst_GUI_FaderNames[3], 0.001, 12.0, PITCH_RAND_MAX)->setPrecision(7);
-    inst_GUI->addSlider(inst_GUI_FaderNames[4], 0.0, 1.0, SAMPLE_POS_START)->setPrecision(7);
-    inst_GUI->addSlider(inst_GUI_FaderNames[5], 0.0, 1.0, SAMPLE_POS_END)->setPrecision(7);
-    inst_GUI->addSlider(inst_GUI_FaderNames[6], 0.0, 1.0, RAND_POS_STRENGTH)->setPrecision(7);
-    inst_GUI->addSlider(inst_GUI_FaderNames[7], 1.0, 100.0, MIN_COL_DISTANCE)->setPrecision(7);
-
-    inst_GUI->addToggle("RETRIGGER_AT_INDEX", RETRIGGER_AT_INDEX);
-    inst_GUI->addToggle("RETRIGGER_AT_END", RETRIGGER_AT_END);
-    inst_GUI->addToggle("METRONOME_TRIGGER", METRONOME_TRIGGER);
-    inst_GUI->addToggle("GRAIN_SHUFFLE", GRAIN_SHUFFLE);
-    inst_GUI->addDropdown("SELECT_WINDOW_FUNCTION", windows);
-    inst_GUI->addTextInput("SELECT_FOLDER", "0")->setInputType(ofxDatGuiInputType::NUMERIC);
-    inst_GUI->addTextInput("X_RES", "10")->setInputType(ofxDatGuiInputType::NUMERIC);
-    inst_GUI->addTextInput("Y_RES", "10")->setInputType(ofxDatGuiInputType::NUMERIC);
-
-    inst_GUI->onSliderEvent(this, &ofApp::onSliderEvent);
-    inst_GUI->onDropdownEvent(this, &ofApp::onDropdownEvent);
-    inst_GUI->onToggleEvent(this, &ofApp::onToggleEvent);
-    inst_GUI->onButtonEvent(this, &ofApp::onButtonEvent);
-    inst_GUI->onTextInputEvent(this, &ofApp::onTextInputEvent);
-
-    presetControl_GUI = new ofxDatGui(ofxDatGuiAnchor::BOTTOM_LEFT);
-    presetControl_GUI->addToggle("UNLOCK_PRESET");
-    presetControl_GUI->addButton("READ_WRITE_PRST");
-    presetControl_GUI->addTextInput("SEL_PRST_NR")->setInputType(ofxDatGuiInputType::NUMERIC);
-
-    presetControl_GUI->onToggleEvent(this, &ofApp::onToggleEvent);
-    presetControl_GUI->onButtonEvent(this, &ofApp::onButtonEvent);
-    presetControl_GUI->onTextInputEvent(this, &ofApp::onTextInputEvent);
-
-    mesh_GUI = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
-    mesh_GUI->enableFboMode(true, ofGetWidth(), ofGetHeight());
-    mesh_GUI->setWidth(180, 0.6f);
-    mesh_GUI->onTextInputEvent(this, &ofApp::onTextInputEvent);
-
-    const auto& vertices = sphere->getUniqueVertices();
-    std::size_t vertexCount = vertices.size();
-
-    mVertexMappings.clear();
-    for (std::size_t vertexIdx = 0; vertexIdx < vertexCount; ++vertexIdx)
-    {
-        VertexMapping vm;
-        vm.guiIndex = vertexIdx;
-        vm.vertexIndex = vertexIdx;
-        vm.position = vertices[vertexIdx];
-
-        auto input = mesh_GUI->addTextInput("V " + ofToString(vertexIdx), "100.0");
-        input->setInputType(ofxDatGuiInputType::NUMERIC);
-        vm.guiInput = input;
-
-        mVertexMappings.push_back(vm);
-    }
-
-    ofBackground(0);
-
-    cam.setDistance(500);
-    cam.removeAllInteractions();
-    cam.addInteraction(ofEasyCam::TRANSFORM_ROTATE, OF_MOUSE_BUTTON_RIGHT);
-    cam.setLensOffset(ofVec2f(-0.3, 0));
-
-    setupOsc();
-
-    loadSoundFolderByIndex(0, forceFileReload, currentXRes, currentYRes);
 }
 
 //--------------------------------------------------------------
-void ofApp::rebuildSphere(int xRes, int yRes)
+int askIntInRange(const std::string& prompt, int minVal, int maxVal, int defaultVal)
 {
-    vertexLoader.stop(); // stop async loading safely before deleting GUI
+    std::string input;
+    int value;
 
-    sphere = std::make_unique<uvSphere>(xRes, yRes, 1.0f);
+    while (true)
+    {
+        std::cout << prompt << " [" << minVal << "-" << maxVal << ", default: " << defaultVal << "]: ";
+        std::getline(std::cin, input);
 
-    delete mesh_GUI;
-    mesh_GUI = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
-    mesh_GUI->enableFboMode(true, ofGetWidth(), ofGetHeight());
-    mesh_GUI->setWidth(180, 0.6f);
-    mesh_GUI->onTextInputEvent(this, &ofApp::onTextInputEvent);
+        if (input.empty())
+            return defaultVal;
 
-    mVertexMappings.clear();
-    const auto& vertices = sphere->getUniqueVertices();
-
-    for (std::size_t vertexIdx = 0; vertexIdx < vertices.size(); ++vertexIdx) {
-        VertexMapping vm;
-        vm.guiIndex = vertexIdx;
-        vm.vertexIndex = vertexIdx;
-        vm.position = vertices[vertexIdx];
-
-        auto input = mesh_GUI->addTextInput("V " + ofToString(vertexIdx), "100.0");
-        input->setInputType(ofxDatGuiInputType::NUMERIC);
-        vm.guiInput = input;
-
-        mVertexMappings.push_back(vm);
+        try {
+            value = std::stoi(input);
+            if (value < minVal || value > maxVal) {
+                std::cerr << "Value out of range. Try again.\n";
+            }
+            else {
+                return value;
+            }
+        }
+        catch (const std::exception&) {
+            std::cerr << "Invalid input. Please enter a number.\n";
+        }
     }
+}
 
-    ofLogNotice() << "[rebuildSphere] Rebuilt with " << vertices.size() << " vertices.";
+//--------------------------------------------------------------
+void ofApp::queryInitialOptions()
+{
+    std::cout << "Select ONE of the following input modes:\n";
+    std::cout << "[0] IMU Sensor\n";
+    std::cout << "[1] Boid Collision (Flocking)\n";
+    std::cout << "[2] Motion Capture (MoCap) Data\n";
+
+    int choice = askIntInRange("Enter choice", 0, 2, 1);
+
+    USE_IMU_SENSOR = (choice == 0);
+    USE_BOID_COLLISION = (choice == 1);
+    USE_MOCAP_DATA = (choice == 2);
+
+    std::cout << "Mode selected: "
+        << (USE_IMU_SENSOR ? "IMU Sensor" :
+            USE_BOID_COLLISION ? "Boid Collision" :
+            "MoCap Data")
+        << "\n";
 }
 
 //--------------------------------------------------------------
 void ofApp::selectAudioDevice()
 {
-    mSettings.setApi(ofSoundDevice::Api::MS_DS);
-    mDevices = mSoundStream.getDeviceList(ofSoundDevice::Api::MS_DS);
-
-    for (int i = 0; i < mDevices.size(); ++i)
+    std::vector<ofSoundDevice::Api> apis;
+    for (int i = static_cast<int>(ofSoundDevice::Api::DEFAULT);
+        i < static_cast<int>(ofSoundDevice::Api::NUM_APIS); ++i)
     {
-        std::cout << mDevices[i] << "\n";
+        apis.push_back(static_cast<ofSoundDevice::Api>(i));
     }
 
-    std::cout << "Select input device by index:" << std::endl;
-    std::cin >> selInputDevice;
+    std::cout << "Available Audio APIs:\n";
+    for (size_t i = 0; i < apis.size(); ++i)
+    {
+        std::cout << "[" << i << "] " << apiToString(apis[i]) << "\n";
+    }
+
+    int selectedApiIndex = askIntInRange("Select audio API by index", 0, apis.size() - 1, 0);
+    ofSoundDevice::Api selectedApi = apis[selectedApiIndex];
+    mSettings.setApi(selectedApi);
+
+    mDevices = mSoundStream.getDeviceList(selectedApi);
+
+    std::cout << "\nAvailable devices for API " << ofToString(selectedApi) << ":\n";
+    for (int i = 0; i < mDevices.size(); ++i)
+    {
+        std::cout << "[" << i << "] " << mDevices[i].name << "\n";
+    }
+
+    int selInputDeviceInt = askIntInRange("Select input device by index", 0, mDevices.size() - 1, 0);
+    selInputDevice = std::to_string(selInputDeviceInt);
+
+    mAudioNumOutputChannels = askIntInRange("Select number of audio output channels", 2, 8, 2);
+    std::cout << "Selected output channels: " << mAudioNumOutputChannels << "\n";
 }
 
 //--------------------------------------------------------------
@@ -174,23 +108,169 @@ void ofApp::startAudioBackend()
 }
 
 //--------------------------------------------------------------
+void ofApp::setupGui()
+{
+    inst_GUI = std::make_unique<ofxDatGui>(ofxDatGuiAnchor::TOP_LEFT);
+    inst_GUI->addSlider(inst_GUI_FaderNames[0], 0.001, 20.0)->setPrecision(7);
+    inst_GUI->addSlider(inst_GUI_FaderNames[1], 0.0, 1.0)->setPrecision(7);
+    inst_GUI->addSlider(inst_GUI_FaderNames[2], 0.001, 12.0)->setPrecision(7);
+    inst_GUI->addSlider(inst_GUI_FaderNames[3], 0.001, 12.0)->setPrecision(7);
+    inst_GUI->addSlider(inst_GUI_FaderNames[4], 0.0, 1.0)->setPrecision(7);
+    inst_GUI->addSlider(inst_GUI_FaderNames[5], 0.0, 1.0)->setPrecision(7);
+    inst_GUI->addSlider(inst_GUI_FaderNames[6], 0.0, 1.0)->setPrecision(7);
+    inst_GUI->addSlider(inst_GUI_FaderNames[7], 1.0, 100.0)->setPrecision(7);
+
+    inst_GUI->addToggle("RETRIGGER_AT_INDEX", RETRIGGER_AT_INDEX);
+    inst_GUI->addToggle("RETRIGGER_AT_END", RETRIGGER_AT_END);
+    inst_GUI->addToggle("METRONOME_TRIGGER", METRONOME_TRIGGER);
+    inst_GUI->addToggle("GRAIN_SHUFFLE", GRAIN_SHUFFLE);
+    inst_GUI->addDropdown("SELECT_WINDOW_FUNCTION", windows);
+    inst_GUI->addTextInput("SELECT_FOLDER", "0")->setInputType(ofxDatGuiInputType::NUMERIC);
+    inst_GUI->addTextInput("X_RES", "10")->setInputType(ofxDatGuiInputType::NUMERIC);
+    inst_GUI->addTextInput("Y_RES", "10")->setInputType(ofxDatGuiInputType::NUMERIC);
+
+    inst_GUI->onSliderEvent(this, &ofApp::onSliderEvent);
+    inst_GUI->onDropdownEvent(this, &ofApp::onDropdownEvent);
+    inst_GUI->onToggleEvent(this, &ofApp::onToggleEvent);
+    inst_GUI->onButtonEvent(this, &ofApp::onButtonEvent);
+    inst_GUI->onTextInputEvent(this, &ofApp::onTextInputEvent);
+
+    presetControl_GUI = std::make_unique<ofxDatGui>(ofxDatGuiAnchor::BOTTOM_LEFT);
+    presetControl_GUI->addToggle("UNLOCK_PRESET");
+    presetControl_GUI->addButton("READ_WRITE_PRST");
+    presetControl_GUI->addTextInput("SEL_PRST_NR")->setInputType(ofxDatGuiInputType::NUMERIC);
+
+    presetControl_GUI->onToggleEvent(this, &ofApp::onToggleEvent);
+    presetControl_GUI->onButtonEvent(this, &ofApp::onButtonEvent);
+    presetControl_GUI->onTextInputEvent(this, &ofApp::onTextInputEvent);
+
+    mesh_GUI = std::make_unique<ofxDatGui>(ofxDatGuiAnchor::TOP_RIGHT);
+    mesh_GUI->enableFboMode(true, ofGetWidth(), ofGetHeight());
+    mesh_GUI->setWidth(180, 0.6f);
+    mesh_GUI->onTextInputEvent(this, &ofApp::onTextInputEvent);
+}
+
+//--------------------------------------------------------------
+void ofApp::setupSphere()
+{
+    sphere = std::make_unique<uvSphere>(10, 10, 1.0f);
+
+    const auto& vertices = sphere->getUniqueVertices();
+    mVertexMappings.clear();
+    mVertexMap.clear();
+
+    for (std::size_t vertexIdx = 0; vertexIdx < vertices.size(); ++vertexIdx)
+    {
+        VertexMapping vm;
+        vm.guiIndex = vertexIdx;
+        vm.vertexIndex = vertexIdx;
+        vm.position = vertices[vertexIdx];
+
+        auto input = mesh_GUI->addTextInput("V " + ofToString(vertexIdx), "100.0");
+        input->setInputType(ofxDatGuiInputType::NUMERIC);
+        vm.guiInput = input;
+
+        mVertexMappings.push_back(vm);
+        mVertexMap[vm.vertexIndex] = mVertexMappings.size() - 1;
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::setupCamera()
+{
+    cam.setDistance(500);
+    cam.removeAllInteractions();
+    cam.addInteraction(ofEasyCam::TRANSFORM_ROTATE, OF_MOUSE_BUTTON_RIGHT);
+    cam.setLensOffset(ofVec2f(-0.3, 0));
+}
+
+//--------------------------------------------------------------
 void ofApp::setupOsc()
 {
     try
     {
         mSelf = std::shared_ptr<ofApp>(this);
-        mOscReceiver = new dab::OscReceiver("MocapReceiver", 9004);
+        mOscReceiver = std::make_unique<dab::OscReceiver>("MocapReceiver", 9004);
         mOscReceiver->registerOscListener(std::weak_ptr<ofApp>(mSelf));
         mOscReceiver->start();
 
         mOscSendAddress = "127.0.0.1";
         mOscSendPort = 9010;
-        mOscSender = new dab::OscSender("MocapSender", mOscSendAddress, mOscSendPort);
+        mOscSender = std::make_unique<dab::OscSender>("MocapSender", mOscSendAddress, mOscSendPort);
     }
     catch (dab::Exception& e)
     {
         std::cout << e << "\n";
     }
+}
+
+//--------------------------------------------------------------
+void ofApp::setupRenderOptions()
+{
+    ofSetVerticalSync(true);
+    ofBackground(0);
+}
+
+//--------------------------------------------------------------
+void ofApp::setup()
+{
+    setupLogging();
+    queryInitialOptions();
+    selectAudioDevice();
+
+    mAudioGrains.reserve(MAX_GRAINS);
+    mAudioAmbiDecoder.resize(mAudioNumOutputChannels);
+
+    availableAudioFolders = getFolderNames();
+
+    if (availableAudioFolders.empty()) {
+        ofLogWarning() << "[setup] No audio folders found inside data/";
+        return;
+    }
+
+    setupGui();
+    setupSphere();
+    setupCamera();
+    setupOsc();
+
+    loadSoundFolderByIndex(0, forceFileReload, currentXRes, currentYRes);
+
+    setupRenderOptions();
+}
+
+//--------------------------------------------------------------
+void ofApp::rebuildSphere(int xRes, int yRes)
+{
+    vertexLoader.stop(); // stop async loading safely before deleting GUI
+
+    sphere = std::make_unique<uvSphere>(xRes, yRes, 1.0f);
+
+    mesh_GUI.reset();
+    mesh_GUI = std::make_unique<ofxDatGui>(ofxDatGuiAnchor::TOP_RIGHT);
+    mesh_GUI->enableFboMode(true, ofGetWidth(), ofGetHeight());
+    mesh_GUI->setWidth(180, 0.6f);
+    mesh_GUI->onTextInputEvent(this, &ofApp::onTextInputEvent);
+
+    mVertexMappings.clear();
+    mVertexMap.clear();
+    const auto& vertices = sphere->getUniqueVertices();
+
+    for (std::size_t vertexIdx = 0; vertexIdx < vertices.size(); ++vertexIdx) {
+        VertexMapping vm;
+        vm.guiIndex = vertexIdx;
+        vm.vertexIndex = vertexIdx;
+        vm.position = vertices[vertexIdx];
+
+        auto input = mesh_GUI->addTextInput("V " + ofToString(vertexIdx), "100.0");
+        input->setInputType(ofxDatGuiInputType::NUMERIC);
+        vm.guiInput = input;
+
+
+        mVertexMappings.push_back(vm);
+        mVertexMap[vm.vertexIndex] = mVertexMappings.size() - 1;
+    }
+
+    ofLogNotice() << "[rebuildSphere] Rebuilt with " << vertices.size() << " vertices.";
 }
 
 //--------------------------------------------------------------
@@ -205,101 +285,123 @@ void ofApp::notify(std::shared_ptr<dab::OscMessage> pMessage)
 }
 
 //--------------------------------------------------------------
-void ofApp::updateOsc()
+void ofApp::handleMocapJointMessage(const std::vector<dab::_OscArg*>& arguments)
 {
-    mOscLock.lock();
+    size_t jointCount = mJointPositions.size();
+    size_t argCount = arguments.size();
 
-    while (mOscMessageQueue.size() > 0)
+    for (int jI = 0, aI = 0; jI < jointCount; ++jI, aI += 3)
     {
-        std::shared_ptr< dab::OscMessage > oscMessage = mOscMessageQueue[0];
+        if (RNN_MOTION_CONTINUATION)
+        {
+            mJointPositions[jI].x = *arguments[aI];
+            mJointPositions[jI].y = *arguments[aI + 2];
+            mJointPositions[jI].z = *arguments[aI + 1];
 
-        updateOsc(oscMessage);
-
-        mOscMessageQueue.pop_front();
+            mJointPositions[jI].x *= -1.0;
+        }
+        else
+        {
+            mJointPositions[jI].x = *arguments[aI];
+            mJointPositions[jI].y = *arguments[aI + 1];
+            mJointPositions[jI].z = *arguments[aI + 2];
+        }
     }
-
-    mOscLock.unlock();
 }
 
 //--------------------------------------------------------------
-void ofApp::updateOsc(std::shared_ptr<dab::OscMessage> pMessage)
+void ofApp::handleBoidPositions(const std::vector<dab::_OscArg*>& arguments)
 {
-    try
-    {
-        std::string address = pMessage->address();
+    size_t argCount = arguments.size();
+    size_t numBoids = argCount / 3;
 
+    std::vector<glm::vec3> tempBoidPositions(numBoids);
+
+    for (size_t i = 0, bI = 0; i < numBoids; ++i, bI += 3)
+    {
+        glm::vec3 pos;
+        pos.x = *arguments[bI];
+        pos.y = *arguments[bI + 1];
+        pos.z = *arguments[bI + 2];
+
+        tempBoidPositions[i] = pos;
+    }
+
+    float maxLength = 0.0001f;
+    for (const auto& pos : tempBoidPositions)
+    {
+        float len = glm::length(pos);
+        if (len > maxLength)
+            maxLength = len;
+    }
+
+    float targetRadius = 100.0f;
+    for (auto& pos : tempBoidPositions)
+    {
+        pos = glm::normalize(pos) * targetRadius;
+    }
+
+    mBoidPositions = std::move(tempBoidPositions);
+}
+
+//--------------------------------------------------------------
+void ofApp::handleImuMessage(const std::vector<dab::_OscArg*>& arguments)
+{
+    float w = *arguments[0];
+    float x = *arguments[1];
+    float y = *arguments[2];
+    float z = *arguments[3];
+    mArduinoQuat = glm::quat(w, x, y, z);
+}
+
+void ofApp::handleAudioPresetMessage(const std::vector<dab::_OscArg*>& arguments)
+{
+    int presetNumber = *arguments[0];
+    pendingPresetStr = std::to_string(presetNumber);
+    pendingPresetLoad = true;
+
+    int presetAudioTrigger = *arguments[1];
+    pendingAudioTrigger = bool(presetAudioTrigger);
+}
+
+//--------------------------------------------------------------
+void ofApp::updateOsc()
+{
+    std::scoped_lock lock(mOscLock);
+
+    while (!mOscMessageQueue.empty())
+    {
+        auto oscMessage = mOscMessageQueue.front();
+        handleOscMessage(oscMessage);
+        mOscMessageQueue.pop_front();
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::handleOscMessage(std::shared_ptr<dab::OscMessage> pMessage)
+{
+    try {
+        const std::string& address = pMessage->address();
         const std::vector<dab::_OscArg*>& arguments = pMessage->arguments();
 
         if (address == "/mocap/joint/pos_world" || address == "/mocap/0/joint/pos_world")
         {
-            size_t jointCount = mJointPositions.size();
-            size_t argCount = arguments.size();
-
-            jointCount = std::min(jointCount, argCount / 3);
-
-            for (int jI = 0, aI = 0; jI < jointCount; ++jI, aI += 3)
-            {
-                if (RNN_MOTION_CONTINUATION)
-                {
-                    mJointPositions[jI].x = *arguments[aI];
-                    mJointPositions[jI].y = *arguments[aI + 2];
-                    mJointPositions[jI].z = *arguments[aI + 1];
-
-                    mJointPositions[jI].x *= -1.0;
-                }
-                else 
-                {
-                    mJointPositions[jI].x = *arguments[aI];
-                    mJointPositions[jI].y = *arguments[aI + 1];
-                    mJointPositions[jI].z = *arguments[aI + 2];
-                }
-            }
+            handleMocapJointMessage(arguments);
         }
         else if (address == "/boid/positions")
         {
-            size_t argCount = arguments.size();
-            size_t numBoids = argCount / 3;
-
-            std::vector<glm::vec3> tempBoidPositions(numBoids);
-
-            for (size_t i = 0, bI = 0; i < numBoids; ++i, bI += 3)
-            {
-                glm::vec3 pos;
-                pos.x = *arguments[bI];
-                pos.y = *arguments[bI + 1];
-                pos.z = *arguments[bI + 2];
-
-                tempBoidPositions[i] = pos;
-            }
-
-            float maxLength = 0.0001f;
-            for (const auto& pos : tempBoidPositions)
-            {
-                float len = glm::length(pos);
-                if (len > maxLength)
-                    maxLength = len;
-            }
-
-            float targetRadius = 100.0f;
-            for (auto& pos : tempBoidPositions)
-            {
-                pos = glm::normalize(pos) * targetRadius;
-            }
-
-            mBoidPositions = std::move(tempBoidPositions);
+            handleBoidPositions(arguments);
         }
         else if (address == "/imu/2")
         {
-            float w = *arguments[0];
-            float x = *arguments[1];
-            float y = *arguments[2];
-            float z = *arguments[3];
-            mArduinoQuat = glm::quat(w, x, y, z);
+            handleImuMessage(arguments);
+        }
+        else if (address == "/audio/preset")
+        {
+            handleAudioPresetMessage(arguments);
         }
     }
-
-    catch (dab::Exception& e)
-    {
+    catch (dab::Exception& e) {
         std::cout << e << "\n";
     }
 }
@@ -324,6 +426,68 @@ void ofApp::updateOscSender() throw (dab::Exception)
     {
         std::cout << e << "\n";
     }
+}
+
+//--------------------------------------------------------------
+void ofApp::updatePresetTrigger()
+{
+    if (!pendingPresetLoad) return;
+
+    bool triggerChanged = (mAudioTrigger != pendingAudioTrigger);
+    mAudioTrigger = pendingAudioTrigger;
+    std::cout << "Trigger: " << mAudioTrigger << std::endl;
+
+    if (triggerChanged && mAudioTrigger)
+    {
+        clearAllAudio();
+    }
+
+    presetControl_GUI->getTextInput("SEL_PRST_NR")->setText(pendingPresetStr);
+    mGuiSelectPresetNumber = pendingPresetStr;
+
+    if (auto btn = presetControl_GUI->getButton("READ_WRITE_PRST")) {
+        onButtonEvent(ofxDatGuiButtonEvent(btn));
+    }
+
+    pendingPresetLoad = false;
+}
+
+//--------------------------------------------------------------
+void ofApp::updateMeshLoader()
+{
+    if (vertexLoader.isLoading() || meshBuilt) return;
+
+    auto results = vertexLoader.getResults();
+
+    clearAllAudio();
+
+    for (const auto& [idx, player] : results)
+    {
+        if (player)
+        {
+            mVertexMappings[idx].player = player;
+            ofLogNotice() << "Assigned player to vertex " << idx;
+        }
+        else
+        {
+            ofLogWarning() << "Failed to load player for vertex " << idx;
+        }
+    }
+
+    sphere->buildMeshWithInputs(mVertexMappings);
+    meshBuilt = true;
+}
+
+//--------------------------------------------------------------    
+void ofApp::notifyMeshReady()
+{
+    if (!meshBuilt || loadingFinishedPrinted) return;
+
+    std::cout << "Toggle audio by pressing the key 'o'" << std::endl
+        << "Toggle triggers by pressing the key 't'" << std::endl
+        << "Listening for incoming messages at PORT 9004" << std::endl;
+
+    loadingFinishedPrinted = true;
 }
 
 //--------------------------------------------------------------
@@ -360,107 +524,21 @@ void ofApp::detectJointCollisions(const std::vector<glm::vec3>& pJointPositions)
 }
 
 //--------------------------------------------------------------
-void ofApp::triggerAudio(std::vector<std::size_t> pCollisionIndices)
+void ofApp::update()
 {
-    float playbackSpeed = ofRandom(PITCH_RAND_MIN, PITCH_RAND_MAX);
+    updatePresetTrigger();
+    updateMeshLoader();
+    notifyMeshReady();
+    inst_GUI->update();
+    updateOsc();
+    updateOscSender();
+}
 
-    if ((RETRIGGER_AT_INDEX || RETRIGGER_AT_END) && !METRONOME_TRIGGER)
-    {
-        for (std::size_t colIndex : pCollisionIndices)
-        {
-            auto it = std::find_if(mVertexMappings.begin(), mVertexMappings.end(),
-                [colIndex](const VertexMapping& vm) {
-                    return vm.vertexIndex == colIndex;
-                });
-
-            if (it == mVertexMappings.end() || !it->player)
-            {
-                ofLogWarning() << "No valid player for vertex index " << colIndex;
-                continue;
-            }
-
-            auto& player = it->player;
-
-            float playbackSpeed = ofRandom(PITCH_RAND_MIN, PITCH_RAND_MAX);
-
-            auto [grainStartNorm, grainEndNorm] = getRandomizedGrainBounds(SAMPLE_POS_START, SAMPLE_POS_END, RAND_POS_STRENGTH);
-
-            bool isNewCollision = std::find(mCollisionIndicesBefore.begin(), mCollisionIndicesBefore.end(), colIndex) == mCollisionIndicesBefore.end();
-
-            if (RETRIGGER_AT_INDEX && isNewCollision)
-            {
-                player->start(playbackSpeed, grainStartNorm, grainEndNorm);
-            }
-
-            if (RETRIGGER_AT_END && !player->isPlaying())
-            {
-                player->start(playbackSpeed, grainStartNorm, grainEndNorm);
-            }
-        }
-
-        mCollisionIndicesBefore = pCollisionIndices;
-    }
-
-
-    if (METRONOME_TRIGGER)
-    {
-        float jitterAmount = METRO_FREQUENCY * std::clamp(METRO_JITTER, 0.0f, 1.0f);
-        float minFreq = std::max(0.1f, METRO_FREQUENCY - jitterAmount);
-        float maxFreq = std::min(20000.0f, METRO_FREQUENCY + jitterAmount);
-
-        float jitteredFreq = ofRandom(minFreq, maxFreq);
-
-
-        mAudioPlayerMetro.setFrequency(jitteredFreq);
-
-        mAudioPlayerMetro.setFrequency(METRO_FREQUENCY);
-
-        if (mAudioPlayerMetro.tick())
-        {
-            mAudioGrains.erase(
-                std::remove_if(mAudioGrains.begin(), mAudioGrains.end(),
-                    [](const Grain& grain) {
-                        return !grain.player || !grain.player->isPlaying();
-                    }),
-                mAudioGrains.end()
-                );
-
-            for (std::size_t colIndex : pCollisionIndices)
-            {
-                if (mAudioGrains.size() >= MAX_GRAINS)
-                    break;
-
-                auto it = std::find_if(mVertexMappings.begin(), mVertexMappings.end(),
-                    [colIndex](const VertexMapping& vm) {
-                        return vm.vertexIndex == colIndex;
-                    });
-
-                if (it != mVertexMappings.end() && it->player)
-                {
-                    Grain grain;
-                    grain.player = std::make_shared<sfPlayer>(*(it->player));
-                    grain.position = it->position;
-
-                    float playbackSpeed = ofRandom(PITCH_RAND_MIN, PITCH_RAND_MAX);
-
-                    auto [grainStartNorm, grainEndNorm] = getRandomizedGrainBounds(SAMPLE_POS_START, SAMPLE_POS_END, RAND_POS_STRENGTH);
-
-                    grain.player->start(playbackSpeed, grainStartNorm, grainEndNorm);
-                    mAudioGrains.push_back(grain);
-                }
-
-                else
-                {
-                    ofLogWarning() << "No valid grain player for collision index " << colIndex;
-                }
-            }
-
-            if (GRAIN_SHUFFLE)
-            {
-                std::shuffle(mAudioGrains.begin(), mAudioGrains.end(), std::default_random_engine{});
-            }
-        }
-    }
+//--------------------------------------------------------------
+void ofApp::drawSphereMesh()
+{
+    glPointSize(5.0);
+    sphere->getMesh().draw();
 }
 
 //--------------------------------------------------------------
@@ -489,39 +567,51 @@ void ofApp::drawAudioTrigger(const std::vector<std::size_t>& collisionIndices)
 }
 
 //--------------------------------------------------------------
-void ofApp::update()
+void ofApp::drawCollisionPoints()
 {
-    if (!vertexLoader.isLoading() && !meshBuilt)
+    if (mAudioThreadSync.load(std::memory_order_acquire))
     {
-        auto results = vertexLoader.getResults();
-
-        for (const auto& [idx, player] : results)
-        {
-            if (player)
-            {
-                mVertexMappings[idx].player = player;
-                ofLogNotice() << "Assigned player to vertex " << idx;
-            }
-            else
-            {
-                ofLogWarning() << "Failed to load player for vertex " << idx;
-            }
-        }
-
-        sphere->buildMeshWithInputs(mVertexMappings); 
-        meshBuilt = true;
+        mThreadedCollisionIndices = mCollisionIndices;
+        mAudioThreadSync.store(false, std::memory_order_release);
     }
 
-    if (meshBuilt && !loadingFinishedPrinted)
+    const auto& indices = TEST_TRIGGER ? mManualCollisionIndices : mThreadedCollisionIndices;
+    drawAudioTrigger(indices);
+}
+
+//--------------------------------------------------------------
+void ofApp::drawImuSensor()
+{
+    glm::vec3 sensorPos = mArduinoQuat * glm::vec3(0, 0, -100);
+
+    ofPushStyle();
+    ofSetColor(255, 0, 0);
+    ofDrawSphere(sensorPos, 5.0f);
+    ofPopStyle();
+}
+
+//--------------------------------------------------------------
+void ofApp::drawBoidPositions()
+{
+    ofPushStyle();
+    ofSetColor(255, 0, 0);
+    for (const auto& boidPos : mBoidPositions)
     {
-        std::cout << "Toggle audio by pressing the key 'o'" << std::endl
-                  << "Toggle triggers by pressing the key 't'" << std::endl
-                  << "Listening for incoming messages at PORT 9004" << std::endl;
-
-        loadingFinishedPrinted = true;
+        ofDrawSphere(boidPos, 1.0);
     }
+    ofPopStyle();
+}
 
-    inst_GUI->update();
+//--------------------------------------------------------------
+void ofApp::drawMocapJoints()
+{
+    ofPushStyle();
+    ofSetColor(0, 255, 255);
+    for (const auto& jointPos : mJointPositions)
+    {
+        ofDrawSphere(jointPos, 1.0);
+    }
+    ofPopStyle();
 }
 
 //--------------------------------------------------------------
@@ -531,61 +621,16 @@ void ofApp::draw()
 
     cam.begin();
 
-    glPointSize(5.0);
-    sphere->getMesh().draw();
+    drawSphereMesh();
+    drawCollisionPoints();
 
-    if (mAudioThreadSync.load(std::memory_order_acquire))
-    {
-        mThreadedCollisionIndices = mCollisionIndices;
-        mAudioThreadSync.store(false, std::memory_order_release);
-    }
-
-    if (TEST_TRIGGER)
-    {
-        drawAudioTrigger(mManualCollisionIndices);
-    }
-    else
-    {
-        drawAudioTrigger(mThreadedCollisionIndices);
-    }
-
-    if (USE_IMU_SENSOR)
-    {
-        glm::vec3 pSensorPosition = mArduinoQuat * glm::vec3(0, 0, -100);
-
-        ofPushStyle();
-        ofSetColor(255, 0, 0);
-        ofDrawSphere(pSensorPosition, 5.0f); 
-        ofPopStyle();
-    }
-
-    if (USE_BOID_COLLISION) 
-    {
-        ofPushStyle();
-        ofSetColor(255, 0, 0);
-        for (const auto& boidPos : mBoidPositions) 
-        {
-            ofDrawSphere(boidPos, 1.0);
-        }
-        ofPopStyle();
-    }
-    
-    if (USE_MOCAP_DATA)
-    {
-        ofPushStyle();
-        ofSetColor(0, 255, 255);
-        for (const auto& jointPos : mJointPositions) 
-        {
-            ofDrawSphere(jointPos, 1.0);
-        }
-        ofPopStyle();
-    }
+    if (USE_IMU_SENSOR) drawImuSensor();
+    if (USE_BOID_COLLISION) drawBoidPositions();
+    if (USE_MOCAP_DATA) drawMocapJoints();
 
     cam.end();
 
     ofDisableDepthTest();
-
-    updateOscSender();
 
     if (mesh_GUI) {
         mesh_GUI->getFboTexture().draw(0, 0);
@@ -593,8 +638,129 @@ void ofApp::draw()
 }
 
 //--------------------------------------------------------------
+void ofApp::triggerAtIndexOrEnd(const std::vector<std::size_t>& indices)
+{
+    for (std::size_t colIndex : indices)
+    {
+        auto it = mVertexMap.find(colIndex);
+        if (it == mVertexMap.end())
+        {
+            ofLogWarning() << "No mapping for vertex index " << colIndex;
+            continue;
+        }
+
+        VertexMapping& vm = mVertexMappings[it->second];  // Get reference via index
+        if (!vm.player)
+        {
+            ofLogWarning() << "No valid player for vertex index " << colIndex;
+            continue;
+        }
+
+        auto& player = vm.player;
+
+        float playbackSpeed = ofRandom(PITCH_RAND_MIN, PITCH_RAND_MAX);
+        auto [grainStartNorm, grainEndNorm] = getRandomizedGrainBounds(SAMPLE_POS_START, SAMPLE_POS_END, RAND_POS_STRENGTH);
+
+        bool isNewCollision = std::find(mCollisionIndicesBefore.begin(), mCollisionIndicesBefore.end(), colIndex) == mCollisionIndicesBefore.end();
+
+        if (RETRIGGER_AT_INDEX && isNewCollision)
+        {
+            player->start(playbackSpeed, grainStartNorm, grainEndNorm);
+        }
+
+        if (RETRIGGER_AT_END && !player->isPlaying())
+        {
+            player->start(playbackSpeed, grainStartNorm, grainEndNorm);
+        }
+    }
+
+    mCollisionIndicesBefore = indices;
+}
+
+//--------------------------------------------------------------
+void ofApp::triggerWithMetronome(const std::vector<std::size_t>& indices)
+{
+    float jitterAmount = METRO_FREQUENCY * std::clamp(METRO_JITTER, 0.0f, 1.0f);
+    float minFreq = std::max(0.1f, METRO_FREQUENCY - jitterAmount);
+    float maxFreq = std::min(20000.0f, METRO_FREQUENCY + jitterAmount);
+    float jitteredFreq = ofRandom(minFreq, maxFreq);
+
+    mAudioPlayerMetro.setFrequency(jitteredFreq);
+
+    if (mAudioPlayerMetro.tick())
+    {
+        mAudioGrains.erase(
+            std::remove_if(mAudioGrains.begin(), mAudioGrains.end(),
+                [](const Grain& grain) {
+                    return !grain.player || !grain.player->isPlaying();
+                }),
+            mAudioGrains.end()
+        );
+
+        for (std::size_t colIndex : indices)
+        {
+            if (mAudioGrains.size() >= MAX_GRAINS)
+                break;
+
+            if (auto grain = createGrainFromVertex(colIndex)) {
+                mAudioGrains.push_back(*grain);
+            }
+        }
+
+        if (GRAIN_SHUFFLE)
+        {
+            std::shuffle(mAudioGrains.begin(), mAudioGrains.end(), std::default_random_engine{});
+        }
+    }
+}
+
+//--------------------------------------------------------------
+std::shared_ptr<ofApp::Grain> ofApp::createGrainFromVertex(std::size_t index)
+{
+    auto it = mVertexMap.find(index);
+    if (it == mVertexMap.end())
+    {
+        ofLogWarning() << "[createGrainFromVertex] No mapping for index " << index;
+        return nullptr;
+    }
+
+    VertexMapping& vm = mVertexMappings[it->second];
+    if (!vm.player)
+    {
+        ofLogWarning() << "[createGrainFromVertex] No player at index " << index;
+        return nullptr;
+    }
+
+    auto grain = std::make_shared<Grain>();
+    grain->player = std::make_shared<sfPlayer>(*(vm.player)); // deep copy
+    grain->position = vm.position;
+
+    float playbackSpeed = ofRandom(PITCH_RAND_MIN, PITCH_RAND_MAX);
+    auto [grainStartNorm, grainEndNorm] = getRandomizedGrainBounds(SAMPLE_POS_START, SAMPLE_POS_END, RAND_POS_STRENGTH);
+    grain->player->start(playbackSpeed, grainStartNorm, grainEndNorm);
+
+    return grain;
+}
+
+//--------------------------------------------------------------
+void ofApp::triggerAudio(std::vector<std::size_t> pCollisionIndices)
+{
+    if ((RETRIGGER_AT_INDEX || RETRIGGER_AT_END) && !METRONOME_TRIGGER)
+    {
+        triggerAtIndexOrEnd(pCollisionIndices);
+    }
+
+    if (METRONOME_TRIGGER)
+    {
+        triggerWithMetronome(pCollisionIndices);
+    }
+}
+
+//--------------------------------------------------------------
 void ofApp::audioOut(ofSoundBuffer& outBuffer)
 {
+    outBuffer.set(0.0f);
+
     updateOsc();
 
     if (USE_IMU_SENSOR)
@@ -701,7 +867,25 @@ void ofApp::audioOut(ofSoundBuffer& outBuffer)
         }
     }
 
-    mAudioThreadSync.store(true, memory_order_release);
+    mAudioThreadSync.store(true, std::memory_order_release);
+}
+
+//--------------------------------------------------------------
+void ofApp::clearAllAudio()
+{
+    for (auto& vm : mVertexMappings)
+    {
+        if (vm.player)
+            vm.player->stop();
+    }
+
+    for (auto& grain : mAudioGrains)
+    {
+        if (grain.player)
+            grain.player->stop();
+    }
+
+    mAudioGrains.clear();
 }
 
 //--------------------------------------------------------------
@@ -725,7 +909,7 @@ void ofApp::writeFileToDisk(const std::vector<double>& pSampleBuffer)
 }
 
 //--------------------------------------------------------------
-void ofApp::loadSoundFolderByIndex(int index, bool forceReload = false, int xRes = 10, int yRes = 10) 
+void ofApp::loadSoundFolderByIndex(int index, bool forceReload, int xRes, int yRes)
 {
     if (index < 0 || index >= availableAudioFolders.size()) 
     {
@@ -765,6 +949,7 @@ void ofApp::loadSoundFolderByIndex(int index, bool forceReload = false, int xRes
     vertexLoader.start(tasks);
     meshBuilt = false;
     currentLoadedFolderIndex = index;
+
     ofLogNotice() << "[loadSoundFolderByIndex] Loaded folder: " << folderName;
 }
 
@@ -775,8 +960,14 @@ void ofApp::keyPressed(int key)
     {
         mAudioTrigger = !mAudioTrigger;
 
+        if (mAudioTrigger) 
+        {
+            clearAllAudio();
+        }
         std::cout << "Audio trigger: " << mAudioTrigger << "\n";
     }
+
+
     if (key == 'o')
     {
         mAudioSoundStreamOnOffToggle = (mAudioSoundStreamOnOffToggle + 1) % 2;
@@ -787,7 +978,7 @@ void ofApp::keyPressed(int key)
         }
         if (mAudioSoundStreamOnOffToggle == 1)
         {
-            startAudioBackend();;
+            startAudioBackend();
             std::cout << "Audio engine start" << std::endl;
         }
     }
@@ -964,6 +1155,12 @@ void ofApp::readGuiValuesFromFile(const std::string& presetNumber)
 
     ofJson json = ofLoadJson(fileName);
 
+    bool resolutionChanged = false;
+    bool folderChanged = false;
+    int newXRes = currentXRes;
+    int newYRes = currentYRes;
+    int newFolderIndex = currentLoadedFolderIndex;
+
     for (const auto& name : inst_GUI_FaderNames)
     {
         if (json["inst_GUI"].contains(name))
@@ -982,31 +1179,25 @@ void ofApp::readGuiValuesFromFile(const std::string& presetNumber)
         }
     }
 
-    if (json["inst_GUI"].contains("RETRIGGER_AT_INDEX"))
-    {
-        bool checked = json["inst_GUI"]["RETRIGGER_AT_INDEX"].get<bool>();
-        inst_GUI->getToggle("RETRIGGER_AT_INDEX")->setChecked(checked);
-        RETRIGGER_AT_INDEX = checked;
-    }
-    if (json["inst_GUI"].contains("RETRIGGER_AT_END"))
-    {
-        bool checked = json["inst_GUI"]["RETRIGGER_AT_END"].get<bool>();
-        inst_GUI->getToggle("RETRIGGER_AT_END")->setChecked(checked);
-        RETRIGGER_AT_END = checked;
-    }
-    if (json["inst_GUI"].contains("METRONOME_TRIGGER"))
-    {
-        bool checked = json["inst_GUI"]["METRONOME_TRIGGER"].get<bool>();
-        inst_GUI->getToggle("METRONOME_TRIGGER")->setChecked(checked);
-        METRONOME_TRIGGER = checked;
-    }
-    if (json["inst_GUI"].contains("GRAIN_SHUFFLE"))
-    {
-        bool checked = json["inst_GUI"]["GRAIN_SHUFFLE"].get<bool>();
-        inst_GUI->getToggle("GRAIN_SHUFFLE")->setChecked(checked);
-        GRAIN_SHUFFLE = checked;
-    }
-   
+    auto loadToggle = [&](const std::string& key)
+        {
+            if (json["inst_GUI"].contains(key))
+            {
+                bool checked = json["inst_GUI"][key].get<bool>();
+                inst_GUI->getToggle(key)->setChecked(checked);
+
+                if (key == "RETRIGGER_AT_INDEX")  RETRIGGER_AT_INDEX = checked;
+                else if (key == "RETRIGGER_AT_END") RETRIGGER_AT_END = checked;
+                else if (key == "METRONOME_TRIGGER") METRONOME_TRIGGER = checked;
+                else if (key == "GRAIN_SHUFFLE") GRAIN_SHUFFLE = checked;
+            }
+        };
+
+    loadToggle("RETRIGGER_AT_INDEX");
+    loadToggle("RETRIGGER_AT_END");
+    loadToggle("METRONOME_TRIGGER");
+    loadToggle("GRAIN_SHUFFLE");
+
     if (json["inst_GUI"].contains("SELECT_WINDOW_FUNCTION"))
     {
         std::string label = json["inst_GUI"]["SELECT_WINDOW_FUNCTION"];
@@ -1029,7 +1220,7 @@ void ofApp::readGuiValuesFromFile(const std::string& presetNumber)
                 }
             }
 
-            if (!found) 
+            if (!found)
             {
                 ofLogWarning() << "[SELECT_WINDOW_FUNCTION] Label not found: " << label;
             }
@@ -1047,17 +1238,16 @@ void ofApp::readGuiValuesFromFile(const std::string& presetNumber)
         inst_GUI->getTextInput("X_RES")->setText(xResInput);
         inst_GUI->getTextInput("Y_RES")->setText(yResInput);
 
-        int xRes = ofToInt(xResInput);
-        int yRes = ofToInt(yResInput);
+        newXRes = ofToInt(xResInput);
+        newYRes = ofToInt(yResInput);
 
-        if (xRes != currentXRes || yRes != currentYRes)
+        if (newXRes != currentXRes || newYRes != currentYRes)
         {
-            rebuildSphere(xRes, yRes);
-            currentXRes = xRes;
-            currentYRes = yRes;
-            forceFileReload = true;
+            rebuildSphere(newXRes, newYRes);
+            resolutionChanged = true;
         }
     }
+
     for (size_t i = 0; i < mVertexMappings.size(); ++i)
     {
         std::string key = "Vertex_" + ofToString(i);
@@ -1077,16 +1267,28 @@ void ofApp::readGuiValuesFromFile(const std::string& presetNumber)
         inst_GUI->getTextInput("SELECT_FOLDER")->setText(folderText);
 
         try {
-            int index = std::stoi(folderText);
-            loadSoundFolderByIndex(index, forceFileReload, currentXRes, currentYRes);
+            newFolderIndex = std::stoi(folderText);
+            if (newFolderIndex != currentLoadedFolderIndex) {
+                folderChanged = true;
+            }
         }
         catch (const std::exception& ex) {
             ofLogWarning() << "[readGuiValuesFromFile] Invalid folder index in preset: " << folderText;
+            newFolderIndex = -1;
         }
     }
     else
     {
         ofLogNotice() << "[readGuiValuesFromFile] No SELECT_FOLDER found in preset.";
+    }
+
+    forceFileReload = resolutionChanged || folderChanged;
+
+    if (newFolderIndex >= 0) {
+        loadSoundFolderByIndex(newFolderIndex, forceFileReload, newXRes, newYRes);
+        currentLoadedFolderIndex = newFolderIndex;
+        currentXRes = newXRes;
+        currentYRes = newYRes;
     }
 
     forceFileReload = false;

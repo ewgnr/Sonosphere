@@ -64,11 +64,11 @@ class ofApp : public ofBaseApp
 		bool mGuiReadOrWritePreset = false;
 		std::string mGuiSelectPresetNumber;
 
-		void ofApp::onToggleEvent(ofxDatGuiToggleEvent e);
-		void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e);
-		void ofApp::saveGuiValuesAsFile(const std::string& presetNumber);
-		void ofApp::onButtonEvent(ofxDatGuiButtonEvent e);
-		void ofApp::readGuiValuesFromFile(const std::string& presetNumber);
+		void onToggleEvent(ofxDatGuiToggleEvent e);
+		void onTextInputEvent(ofxDatGuiTextInputEvent e);
+		void saveGuiValuesAsFile(const std::string& presetNumber);
+		void onButtonEvent(ofxDatGuiButtonEvent e);
+		void readGuiValuesFromFile(const std::string& presetNumber);
 
 		ofFbo boidFbo;
 		bool drawDebugElements = false;

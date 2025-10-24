@@ -1,0 +1,11 @@
+Mac Installation Sonosphere 
+
+1. ofxDatGui, ofxDabBase, ofxDabOsc -> in AddOns Ordner verschieben
+2. Project mit ProjectGenerator updaten 
+3. in XCODE: Projekteinstellungen > Build Settings > nach Search Path suchen > Bei Header Search Path & Library Search Paths verlinkung zu sndfile.hh 
+4. Projekteinstellungen>Build Phases > Link Binary with Library > + > Add Other > Add Files > sndfile.a hinzufügen 
+5. Build Settings > nach of_core_frameworks suchen > bei Release und Debug alle „-Framework AGL“ Nennungen entfernen
+
+Zum Öffnen der Anwendung: 
+1. Projektordner in Finder öffnen 
+2. Bin >  Rechtsklick auf die .app Datei > Paketinhalt zeigen >  Contents > MacOS >  File ausführen 
