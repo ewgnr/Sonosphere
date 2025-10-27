@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BuildMachineOSBuild</key>
+	<string>25A362</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>SphericalSoundfilePlayer_v1_15_Mac_ARM64</string>
+	<key>CFBundleIconFile</key>
+	<string>of.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>cc.openFrameworks.SphericalSoundfilePlayer-v1-15-Mac-ARM64</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>SphericalSoundfilePlayer_v1_15_Mac_ARM64</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>MacOSX</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>DTCompiler</key>
+	<string>com.apple.compilers.llvm.clang.1_0</string>
+	<key>DTPlatformBuild</key>
+	<string>25A352</string>
+	<key>DTPlatformName</key>
+	<string>macosx</string>
+	<key>DTPlatformVersion</key>
+	<string>26.0</string>
+	<key>DTSDKBuild</key>
+	<string>25A352</string>
+	<key>DTSDKName</key>
+	<string>macosx26.0</string>
+	<key>DTXcode</key>
+	<string>2601</string>
+	<key>DTXcodeBuild</key>
+	<string>17A400</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.games</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>11.5</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs to access the camera</string>
+	<key>NSCameraUseContinuityCameraDeviceType</key>
+	<true/>
+	<key>NSHighResolutionCapable</key>
+	<string>NO</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs to access the microphone</string>
+</dict>
+</plist>
