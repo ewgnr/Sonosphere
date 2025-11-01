@@ -34,6 +34,7 @@ private:
     // Skeleton
     float scaleFactor = 0.05f;
     bool mirrorMode = true;
+
     std::vector<k4abt_body_t> currentBodies;
     std::vector<k4abt_body_t> drawBodies;
 

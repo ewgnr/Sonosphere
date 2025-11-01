@@ -2,14 +2,14 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-    sender_1.setup("127.0.0.1", 9004);  // Spherical Soundfile Player
-    sender_2.setup("192.168.0.6", 9003);  // Parvival Ray Marching  
+    sender_1.setup("127.0.0.1", 9005);  // Spherical Soundfile Player
+    sender_2.setup("192.168.0.6", 9003);    // Parvival Ray Marching
 
     ofSetFrameRate(60);
     ofBackground(0);
 
     k4a_device_configuration_t config = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
-    config.depth_mode = K4A_DEPTH_MODE_NFOV_2X2BINNED;  // Stable & fast
+    config.depth_mode = K4A_DEPTH_MODE_NFOV_2X2BINNED;
     config.color_resolution = K4A_COLOR_RESOLUTION_OFF;
     config.camera_fps = K4A_FRAMES_PER_SECOND_30;
     config.wired_sync_mode = K4A_WIRED_SYNC_MODE_STANDALONE;
@@ -94,12 +94,12 @@ void ofApp::update() {
             trackedBodyId = std::numeric_limits<uint32_t>::max();
         }
 
-        // Safe copy to shared body list
         {
             std::lock_guard<std::mutex> lock(bodyMutex);
             currentBodies = tempBodies;
         }
 
+        
         for (const auto& body : tempBodies) {
             ofxOscMessage msg;
             msg.setAddress("/mocap/joint/pos_world");
@@ -119,10 +119,15 @@ void ofApp::update() {
                     joints[i].position.v[2] * scaleFactor
                 };
 
+                // 1) am Root zentrieren
                 pos -= root;
-                pos.y *= -1;
+
+                 pos.y *= -1; 
+
+                // 3) optional: Spiegel 
                 if (mirrorMode) pos.x *= -1;
 
+                
                 msg.addFloatArg(pos.x);
                 msg.addFloatArg(pos.y);
                 msg.addFloatArg(pos.z);
@@ -131,8 +136,9 @@ void ofApp::update() {
             sender_1.sendMessage(msg);
             sender_2.sendMessage(msg);
         }
-    }
-}
+        
+    } 
+} 
 
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -150,14 +156,14 @@ void ofApp::draw() {
             const auto& joint = body.skeleton.joints[i];
 
             float x = joint.position.v[0] * 0.005f;
-            if (mirrorMode) x *= -1;
+            if (mirrorMode) x *= -1.0f;
 
             float y = joint.position.v[1] * 0.005f;
 
-            float centerX = ofGetWidth() / 2;
-            float centerY = ofGetHeight() / 2;
+            float centerX = ofGetWidth() / 2.0f;
+            float centerY = ofGetHeight() / 2.0f;
 
-            ofDrawCircle(x * 50 + centerX, y * 50 + centerY, 5);
+            ofDrawCircle(x * 50.0f + centerX, y * 50.0f + centerY, 5.0f);
         }
     }
 }
