@@ -12,7 +12,8 @@ Setup Motion Player
 
 motion_player.config = { 
     "file_name": "../../Data/Mocap/Daniel_ChineseRoom_Take1_50fps.fbx",
-    "fps": 50
+    "fps": 50,
+    "zeropos_joint_index": 0
     }
 
 
