@@ -2,7 +2,6 @@
 Audio Nearest Neighbors
 """
 
-
 """
 Imports
 """
@@ -22,10 +21,10 @@ import time
 Audio Settings
 """
 
-audio_file_path = "../../Data/Audio/Gutenberg/Night_and_Day_by_Virginia_Woolf_48khz.wav"
+audio_file_path = "E:/Data/audio/Gutenberg/minimal"
+audio_file_extensions = ["wav", "aiff", "aif"] 
 audio_sample_rate = 48000
 audio_channel_count = 1
-audio_range_sec = [ 10.0, 70.0 ]
 audio_excerpt_length = 1.0 # in secs
 audio_excerpt_offset = 0.5 # in secs
 
@@ -35,29 +34,37 @@ audio_feature_names = ["root mean square", "mfcc"]
 Load Audio
 """
 
-audio_waveform, _ = librosa.load(audio_file_path, sr=audio_sample_rate)
+audio_waveforms_full = []
 
-if audio_channel_count > 1:
-    audio_waveform = audio_waveform[0]
+for root, _, fnames in sorted(os.walk(audio_file_path, followlinks=True)):
+    for fname in sorted(fnames):
+        
+        path = root + "/" + fname
+        
+        print("path ", path)
+        
+        audio_waveform, _ = librosa.load(path, sr=audio_sample_rate)
 
-audio_waveform = audio_waveform[int(audio_range_sec[0] * audio_sample_rate):int(audio_range_sec[1] * audio_sample_rate)]
-audio_waveform_sc = audio_waveform.shape[0]
+        print("waveform s ", audio_waveform.shape)
+        
+        audio_waveforms_full.append(audio_waveform)
 
 """
 Create Audio Excerpts
 """
 
-audio_excerpts = []
+audio_waveform_excerpts = []
 
 audio_excerpt_length_sc = int(audio_excerpt_length * audio_sample_rate)
 audio_excerpt_offset_sc = int(audio_excerpt_offset * audio_sample_rate)
 
-for sI in range(0, audio_waveform_sc - audio_excerpt_length_sc, audio_excerpt_offset_sc):
-    
-    audio_excerpt = audio_waveform[sI:sI + audio_excerpt_length_sc]
-    audio_excerpts.append(audio_excerpt)
-    
-audio_waveforms = np.stack(audio_excerpts, axis=0)
+for waveform_full in audio_waveforms_full:
+    waveform_sample_count = waveform_full.shape[0]
+    for sI in range(0, waveform_sample_count - audio_excerpt_length_sc, audio_excerpt_offset_sc):
+        waveform_except = waveform_full[sI:sI + audio_excerpt_length_sc]
+        audio_waveform_excerpts.append(waveform_except)
+        
+audio_waveforms = np.stack(audio_waveform_excerpts, axis=0)
         
 """
 Calculate Audio Features
@@ -131,11 +138,16 @@ for audio_feature_name in audio_feature_names:
 audio_features_proc = np.concatenate(audio_features_proc, axis=1)
 audio_waveforms_proc = np.copy(audio_waveforms)
 
+# collect all audio waveforms during nearest neighbor search to later on export all of them
+collected_waveforms = []
+
 # select first audio feature to begin search with
 nn_current_index = 0
 nn_current_waveform = audio_waveforms_proc[nn_current_index]
 nn_current_feature = audio_features_proc[nn_current_index]
 nn_current_feature = np.expand_dims(nn_current_feature, 0)
+
+collected_waveforms.append(nn_current_waveform)
 
 # prepare empty waveform to copy waveforms corresponding to nearest features into
 nn_element_count = audio_features_proc.shape[0]
@@ -150,6 +162,8 @@ amplitude_envelope = np.ones([audio_excerpt_length_sc])
 amplitude_envelope[:audio_sample_overlap] *= hann_window[:audio_sample_overlap]
 amplitude_envelope[-audio_sample_overlap:] *= hann_window[audio_sample_overlap:]
 
+#plt.plot(amplitude_envelope)
+
 # add first waveform to gen waveform
 gen_waveform[:audio_excerpt_length_sc] += nn_current_waveform * amplitude_envelope
 
@@ -158,8 +172,8 @@ sI = audio_excerpt_length_sc -  audio_sample_overlap # sample index for waveform
 
 while nn_element_count > 0:
     
-    print("nn_element_count ", nn_element_count)
-
+    print("remaining neighbors ", nn_element_count)
+    
     # search nearest element
     nn_distances = np.linalg.norm(audio_features_proc - nn_current_feature, axis=1)
     k = 2
@@ -171,6 +185,8 @@ while nn_element_count > 0:
     nn_current_waveform = audio_waveforms_proc[nn_current_index]
     nn_current_feature = audio_features_proc[nn_current_index]
     nn_current_feature = np.expand_dims(nn_current_feature, 0)
+    
+    collected_waveforms.append(nn_current_waveform)
     
     # blend waveform corresponding to current element into gen waveform
     gen_waveform[sI:sI + audio_excerpt_length_sc] += nn_current_waveform * amplitude_envelope
@@ -194,13 +210,22 @@ while nn_element_count > 0:
 Play Generated Waveform
 """
 
-play_obj = sa.play_buffer(gen_waveform, 1, 4, audio_sample_rate)
-play_obj.wait_done()
+#play_obj = sa.play_buffer(gen_waveform, 1, 4, audio_sample_rate)
+#play_obj.wait_done()
+
 
 """
-Save Generated Waveform
+Save generated waveform
 """
 
 gen_waveform = torch.tensor(gen_waveform)
 gen_waveform = gen_waveform.unsqueeze(0)
-torchaudio.save("data_proc/gen_waveform.wav", gen_waveform, audio_sample_rate)
+torchaudio.save("results/audio_nn_full.wav", gen_waveform, audio_sample_rate)
+
+"""
+Save collected waveforms
+"""
+
+for wI in range(len(collected_waveforms)):
+    torchaudio.save("results/audio_nn_excerpt_{:05d}.wav".format(wI), torch.tensor(collected_waveforms[wI]).unsqueeze(0), audio_sample_rate)
+    
