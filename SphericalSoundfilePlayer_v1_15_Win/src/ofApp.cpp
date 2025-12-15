@@ -289,6 +289,24 @@ void ofApp::handleMocapJointMessage(const std::vector<dab::_OscArg*>& arguments)
 {
     size_t jointCount = mJointPositions.size();
     size_t argCount = arguments.size();
+    size_t rootJointIndex = 0;
+
+    glm::vec3 rootJointPosition;
+
+    if (RNN_MOTION_CONTINUATION)
+    {
+        rootJointPosition.x = *arguments[rootJointIndex * 3];
+        rootJointPosition.y = *arguments[rootJointIndex * 3 + 2];
+        rootJointPosition.z = *arguments[rootJointIndex * 3 + 1];
+
+        rootJointPosition.x *= -1.0;
+    }
+    else
+    { 
+        rootJointPosition.x = *arguments[rootJointIndex * 3];
+        rootJointPosition.y = *arguments[rootJointIndex * 3 + 1];
+        rootJointPosition.z = *arguments[rootJointIndex * 3 + 2];
+    }
 
     for (int jI = 0, aI = 0; jI < jointCount; ++jI, aI += 3)
     {
@@ -306,6 +324,10 @@ void ofApp::handleMocapJointMessage(const std::vector<dab::_OscArg*>& arguments)
             mJointPositions[jI].y = *arguments[aI + 1];
             mJointPositions[jI].z = *arguments[aI + 2];
         }
+
+        mJointPositions[jI].x -= rootJointPosition.x;
+        mJointPositions[jI].y -= rootJointPosition.y;
+        mJointPositions[jI].z -= rootJointPosition.z;
     }
 }
 

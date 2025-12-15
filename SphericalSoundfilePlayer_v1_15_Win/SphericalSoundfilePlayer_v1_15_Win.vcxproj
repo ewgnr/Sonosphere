@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(WindowsTargetPlatformVersion)'==''">
+    <LatestTargetPlatformVersion>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion('Windows', '10.0'))</LatestTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(WindowsTargetPlatformVersion)' == ''">$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <TargetPlatformVersion>$(WindowsTargetPlatformVersion)</TargetPlatformVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7FD42DF7-442E-479A-BA76-D0022F99702A}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>SphericalSoundfilePlayer_v1_15_Win</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>bin\</OutDir>
+    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_debug</TargetName>
+    <LinkIncremental>true</LinkIncremental>
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>bin\</OutDir>
+    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;ofxDabBase\src;ofxDabOsc\libs;ofxDabOsc\libs\oscpack;ofxDabOsc\libs\oscpack\src;ofxDabOsc\libs\oscpack\src\ip;ofxDabOsc\libs\oscpack\src\ip\posix;ofxDabOsc\libs\oscpack\src\ip\win32;ofxDabOsc\libs\oscpack\src\osc;ofxDabOsc\src;ofxDatGui\src;ofxDatGui\src\components;ofxDatGui\src\core;ofxDatGui\src\libs;ofxDatGui\src\libs\ofxSmartFont;ofxDatGui\src\themes</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)\Build\%(RelativeDir)\$(Configuration)\</ObjectFileName>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;ofxDabBase\src;ofxDabOsc\libs;ofxDabOsc\libs\oscpack;ofxDabOsc\libs\oscpack\src;ofxDabOsc\libs\oscpack\src\ip;ofxDabOsc\libs\oscpack\src\ip\posix;ofxDabOsc\libs\oscpack\src\ip\win32;ofxDabOsc\libs\oscpack\src\osc;ofxDabOsc\src;ofxDatGui\src;ofxDatGui\src\components;ofxDatGui\src\core;ofxDatGui\src\libs;ofxDatGui\src\libs\ofxSmartFont;ofxDatGui\src\themes;libsndfile\include</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ObjectFileName>$(IntDir)\Build\%(RelativeDir)\$(Configuration)\</ObjectFileName>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <AdditionalDependencies>sndfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>libsndfile\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ofApp.cpp" />
+    <ClCompile Include="ofxDabBase\src\dab_array.cpp" />
+    <ClCompile Include="ofxDabBase\src\dab_buffer.cpp" />
+    <ClCompile Include="ofxDabBase\src\dab_exception.cpp" />
+    <ClCompile Include="ofxDabBase\src\dab_file_io.cpp" />
+    <ClCompile Include="ofxDabBase\src\dab_listener.cpp" />
+    <ClCompile Include="ofxDabBase\src\dab_parameter.cpp" />
+    <ClCompile Include="ofxDabBase\src\dab_singleton.cpp" />
+    <ClCompile Include="ofxDabBase\src\dab_tokenizer.cpp" />
+    <ClCompile Include="ofxDabBase\src\dab_value.cpp" />
+    <ClCompile Include="ofxDabOsc\src\dab_osc_arg.cpp" />
+    <ClCompile Include="ofxDabOsc\src\dab_osc_message.cpp" />
+    <ClCompile Include="ofxDabOsc\src\dab_osc_messenger.cpp" />
+    <ClCompile Include="ofxDabOsc\src\dab_osc_receiver.cpp" />
+    <ClCompile Include="ofxDabOsc\src\dab_osc_sender.cpp" />
+    <ClCompile Include="ofxDabOsc\src\dab_osc_utils.cpp" />
+    <ClCompile Include="ofxDabOsc\libs\oscpack\src\ip\IpEndpointName.cpp" />
+    <ClCompile Include="ofxDabOsc\libs\oscpack\src\ip\win32\NetworkingUtils.cpp" />
+    <ClCompile Include="ofxDabOsc\libs\oscpack\src\ip\win32\UdpSocket.cpp" />
+    <ClCompile Include="ofxDabOsc\libs\oscpack\src\osc\OscOutboundPacketStream.cpp" />
+    <ClCompile Include="ofxDabOsc\libs\oscpack\src\osc\OscPrintReceivedElements.cpp" />
+    <ClCompile Include="ofxDabOsc\libs\oscpack\src\osc\OscReceivedElements.cpp" />
+    <ClCompile Include="ofxDabOsc\libs\oscpack\src\osc\OscTypes.cpp" />
+    <ClCompile Include="ofxDatGui\src\core\ofxDatGuiComponent.cpp" />
+    <ClCompile Include="ofxDatGui\src\libs\ofxSmartFont\ofxSmartFont.cpp" />
+    <ClCompile Include="ofxDatGui\src\ofxDatGui.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ofApp.h" />
+    <ClInclude Include="src\ambi2dInPhase.h" />
+    <ClInclude Include="src\fileIO.h" />
+    <ClInclude Include="src\icoSphere.h" />
+    <ClInclude Include="src\metro.h" />
+    <ClInclude Include="src\sfPlayer.h" />
+    <ClInclude Include="src\threadedVertexLoader.h" />
+    <ClInclude Include="src\uvSphere.h" />
+    <ClInclude Include="src\uvSphere2.h" />
+    <ClInclude Include="src\vertexMapping.h" />
+    <ClInclude Include="ofxDabBase\src\dab_array.h" />
+    <ClInclude Include="ofxDabBase\src\dab_buffer.h" />
+    <ClInclude Include="ofxDabBase\src\dab_exception.h" />
+    <ClInclude Include="ofxDabBase\src\dab_file_io.h" />
+    <ClInclude Include="ofxDabBase\src\dab_index_map.h" />
+    <ClInclude Include="ofxDabBase\src\dab_listener.h" />
+    <ClInclude Include="ofxDabBase\src\dab_parameter.h" />
+    <ClInclude Include="ofxDabBase\src\dab_ringbuffer.h" />
+    <ClInclude Include="ofxDabBase\src\dab_singleton.h" />
+    <ClInclude Include="ofxDabBase\src\dab_tokenizer.h" />
+    <ClInclude Include="ofxDabBase\src\dab_value.h" />
+    <ClInclude Include="ofxDabOsc\src\dab_osc_arg.h" />
+    <ClInclude Include="ofxDabOsc\src\dab_osc_includes.h" />
+    <ClInclude Include="ofxDabOsc\src\dab_osc_message.h" />
+    <ClInclude Include="ofxDabOsc\src\dab_osc_messenger.h" />
+    <ClInclude Include="ofxDabOsc\src\dab_osc_receiver.h" />
+    <ClInclude Include="ofxDabOsc\src\dab_osc_sender.h" />
+    <ClInclude Include="ofxDabOsc\src\dab_osc_types.h" />
+    <ClInclude Include="ofxDabOsc\src\dab_osc_utils.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\ip\IpEndpointName.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\ip\NetworkingUtils.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\ip\PacketListener.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\ip\TimerListener.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\ip\UdpSocket.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\osc\MessageMappingOscPacketListener.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\osc\OscException.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\osc\OscHostEndianness.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\osc\OscOutboundPacketStream.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\osc\OscPacketListener.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\osc\OscPrintReceivedElements.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\osc\OscReceivedElements.h" />
+    <ClInclude Include="ofxDabOsc\libs\oscpack\src\osc\OscTypes.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGui2dPad.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiButton.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiColorPicker.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiControls.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiFRM.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiGroups.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiLabel.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiMatrix.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiScrollView.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiSlider.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiTextInput.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiTextInputField.h" />
+    <ClInclude Include="ofxDatGui\src\components\ofxDatGuiTimeGraph.h" />
+    <ClInclude Include="ofxDatGui\src\core\ofxDatGuiComponent.h" />
+    <ClInclude Include="ofxDatGui\src\core\ofxDatGuiConstants.h" />
+    <ClInclude Include="ofxDatGui\src\core\ofxDatGuiEvents.h" />
+    <ClInclude Include="ofxDatGui\src\core\ofxDatGuiIntObject.h" />
+    <ClInclude Include="ofxDatGui\src\libs\ofxSmartFont\ofxSmartFont.h" />
+    <ClInclude Include="ofxDatGui\src\ofxDatGui.h" />
+    <ClInclude Include="ofxDatGui\src\themes\ofxDatGuiTheme.h" />
+    <ClInclude Include="ofxDatGui\src\themes\ofxDatGuiThemes.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(OF_ROOT)\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
+      <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="icon.rc">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworksCompiled\project\vs</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="icon.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
