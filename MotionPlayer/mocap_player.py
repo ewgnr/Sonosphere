@@ -11,7 +11,7 @@ Setup Motion Player
 """
 
 motion_player.config = { 
-    "file_name": "../../Data/Mocap/Daniel_ChineseRoom_Take1_50fps.fbx",
+    "file_name": "C:/Users/ephra/Documents/Git/Sonosphere/Data/mocap/ChineseRoom_Daniel_Take1_50fps.fbx",
     "fps": 50,
     "zeropos_joint_index": 0
     }
