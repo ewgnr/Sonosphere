@@ -85,7 +85,7 @@ ofxDatGuiType ofxDatGuiComponent::getType()
 
 const ofxDatGuiTheme* ofxDatGuiComponent::getTheme()
 {
-    if (theme == nullptr) theme = make_unique<ofxDatGuiTheme>(true);
+    if (theme == nullptr) theme = std::make_unique<ofxDatGuiTheme>(true);
     return theme.get();
 }
 

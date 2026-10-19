@@ -1,0 +1,123 @@
+SphericalSoundfilePlayer v1.15 – Installation auf dem Mac (Apple Silicon)
+=========================================================================
+
+ÜBERBLICK
+  1. openFrameworks entpacken
+  2. Addons kopieren
+  3. Projektordner nach apps/myApps legen
+  4. Projekt mit dem projectGenerator neu generieren
+  5. In Xcode drei Einstellungen setzen (Deployment Target + libsndfile)
+  6. Bauen und starten
+
+
+
+SCHRITT 1 – openFrameworks entpacken
+  Den Ordner "of_v0.12.1_osx_release" an einen festen Ort legen,
+  z. B. in deinen Benutzerordner. Danach nicht mehr verschieben.
+
+
+SCHRITT 2 – Addons kopieren
+  Alle drei Ordner aus
+      SphericalSoundfilePlayer_v1_15_Mac_ARM64/addons_fuer_openFrameworks/
+          ofxDabBase
+          ofxDabOsc
+          ofxDatGui
+  in den Addons-Ordner von openFrameworks kopieren:
+      of_v0.12.1_osx_release/addons/
+  Falls dort schon ein ofxDatGui liegt: ERSETZEN.
+  (Die Version hier ist für openFrameworks 0.12 gepatcht,
+   siehe FIXES_ofxDatGui.txt.)
+
+
+SCHRITT 3 – Projektordner an die richtige Stelle legen
+  Den ganzen Ordner "SphericalSoundfilePlayer_v1_15_Mac_ARM64" nach
+      of_v0.12.1_osx_release/apps/myApps/ kopieren.
+
+
+SCHRITT 4 – Projekt mit dem projectGenerator neu generieren
+  1. of_v0.12.1_osx_release/projectGenerator/projectGenerator.app öffnen.
+     (Falls macOS das Öffnen blockiert: Rechtsklick > "Öffnen" oder
+      Systemeinstellungen > Datenschutz & Sicherheit > "Trotzdem öffnen".)
+  2. "Import" wählen und den Projektordner
+     apps/myApps/SphericalSoundfilePlayer_v1_15_Mac_ARM64 auswählen.
+  3. Prüfen: Bei den Addons müssen ofxDabBase, ofxDabOsc und ofxDatGui
+     ausgewählt sein (kommen automatisch aus addons.make).
+     Plattform: macOS (Xcode).
+  4. "Update" klicken.
+
+  Der projectGenerator erzeugt dabei die Xcode-Projektdatei neu.
+  Er kennt libsndfile nicht und setzt das macOS-Deployment-Target auf
+  11.5 zurück. Deshalb ist Schritt 5 nach JEDEM Generieren nötig.
+
+
+SCHRITT 5 – In Xcode drei Einstellungen setzen
+  Doppelklick auf SphericalSoundfilePlayer_v1_15_Mac_ARM64.xcodeproj
+
+  5.1) Deployment Target
+     Links im Projekt-Navigator "Project.xcconfig" öffnen.
+     Zeile 11:  MACOSX_DEPLOYMENT_TARGET = 11.5
+     ändern in: MACOSX_DEPLOYMENT_TARGET = 12.0
+     und speichern (⌘S).
+     -> Unbedingt HIER in der Datei ändern, nicht nur in den
+        Build Settings. Sonst kommt der Fehler
+        "The macOS deployment target … is set to 11.5, but the range of
+         supported deployment target versions is 12.0 …"
+
+  5.2) Header-Pfad für sndfile
+     Links oben das blaue Projekt anklicken > unter TARGETS den Eintrag
+     auswählen (nicht PROJECT) > Reiter "Build Settings" >
+     oben "All" und "Combined" wählen > suchen: "Header Search Paths" >
+     Doppelklick auf den Wert > "+" > eintragen:
+         $(SRCROOT)/libsndfile_ARM64/include
+
+  5.3) sndfile-Bibliothek linken
+     Gleiche Stelle, suchen: "Other Linker Flags" >
+     Doppelklick > "+" > eintragen:
+         $(SRCROOT)/libsndfile_ARM64/lib/libsndfile.a
+     -> Der Pfad muss bis zur DATEI "libsndfile.a" gehen,
+        nicht nur bis zum Ordner "lib"!
+     (Alternativ: Reiter "Build Phases" > "Link Binary With Libraries" >
+      "+" > "Add Other…" > "Add Files…" > libsndfile.a auswählen.)
+
+  Hinweise:
+  - Vorhandene Einträge (z. B. $(OF_CORE_HEADERS), $(OF_CORE_LIBS))
+    NICHT löschen, nur ergänzen.
+  - Mit "Combined" gilt der Eintrag für Debug UND Release gleichzeitig.
+    Zur Kontrolle auf den kleinen Pfeil links neben der Einstellung
+    klicken: Bei Debug und Release muss jeweils derselbe Pfad stehen.
+    (▶ in Xcode baut "Debug" – ein Fehler nur bei Debug reicht schon,
+     damit der Build scheitert.)
+  - $(SRCROOT) = der Ordner, in dem die .xcodeproj liegt. Die Pfade oben
+    gelten, wenn "libsndfile_ARM64" IM Projektordner liegt.
+  
+
+
+SCHRITT 6 – Bauen und starten
+  1. Oben in der Leiste muss "SphericalSoundfilePlayer…" und "My Mac"
+     ausgewählt sein.
+  2. Auf ▶ (Run) klicken oder ⌘R drücken.
+     Der erste Build kompiliert auch openFrameworks selbst und dauert
+     einige Minuten. Danach geht es schnell.
+
+
+
+
+FEHLERBEHEBUNG
+  "deployment target … is set to 11.5"
+     -> Schritt 5.1: Wert in Project.xcconfig (Zeile 11) auf 12.0 setzen.
+  "'sndfile.hh' file not found"
+     -> Schritt 5.2 fehlt oder Pfad falsch. Ordner libsndfile_ARM64 muss
+        im Projektordner liegen. Leerzeichen im Ordnernamen?
+  Linker-Fehler "Undefined symbols … sf_open" / "sf_…"
+     -> Schritt 5.3 fehlt oder der Pfad endet bei "lib" statt bei
+        "lib/libsndfile.a". Debug UND Release prüfen.
+  "CoreOF.xcconfig" / "ofMain.h" not found
+     -> Projektordner liegt nicht in of_v0.12.1_osx_release/apps/myApps/
+        (Schritt 3 prüfen).
+  Fehler in ofxDatGui (unique_ptr, make_unique, min …)
+     -> Die gepatchten Addons wurden nicht kopiert/ersetzt (Schritt 2).
+  "ofxDatGui.h" / "dab_osc_sender.h" not found
+     -> Addons liegen nicht in of_v0.12.1_osx_release/addons/ oder waren
+        beim Generieren nicht ausgewählt (Schritt 2 und 4).
+  Die App findet keine Sounds / Presets
+     -> bin/data fehlt oder die .app wurde aus dem bin-Ordner verschoben.

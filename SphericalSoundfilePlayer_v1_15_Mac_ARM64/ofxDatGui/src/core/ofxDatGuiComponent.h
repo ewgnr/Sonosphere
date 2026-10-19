@@ -21,6 +21,7 @@
 */
 
 #pragma once
+#include <memory>
 #include "ofxDatGuiIntObject.h"
 
 class ofxDatGuiComponent : public ofxDatGuiInteractiveObject
@@ -175,7 +176,7 @@ class ofxDatGuiComponent : public ofxDatGuiInteractiveObject
     
     private:
     
-        static unique_ptr<ofxDatGuiTheme> theme;
+        static std::unique_ptr<ofxDatGuiTheme> theme;
     
 };
 

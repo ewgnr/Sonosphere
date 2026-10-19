@@ -429,7 +429,7 @@ void ofApp::handleOscMessage(std::shared_ptr<dab::OscMessage> pMessage)
 }
 
 //--------------------------------------------------------------
-void ofApp::updateOscSender() throw (dab::Exception)
+void ofApp::updateOscSender() noexcept(false)
 {
     try
     {
