@@ -946,7 +946,7 @@ void ofApp::loadSoundFolderByIndex(int index, bool forceReload, int xRes, int yR
     }
 
     std::string folderName = availableAudioFolders[index];
-    std::string folderPath = "data/" + folderName;
+    std::string folderPath = ofToDataPath(folderName, true);
     std::vector<std::string> filePaths = directoryIterator(folderPath);
 
     if (mVertexMappings.size() > filePaths.size())
@@ -1066,7 +1066,7 @@ void ofApp::onDropdownEvent(ofxDatGuiDropdownEvent e)
     if (e.target->is("SELECT_SOUND_FOLDER"))
     {
         std::string selectedFolder = e.target->getChildAt(e.child)->getName();
-        std::string folderPath = "data/" + selectedFolder;
+        std::string folderPath = ofToDataPath(selectedFolder, true);
 
         std::vector<std::string> fileNames = directoryIterator(folderPath);
 

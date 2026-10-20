@@ -6,9 +6,9 @@
 
 - **Azure Kinect Tracker:** Captures and processes real-time body movement data for interaction with Sonosphere.
 - **Swarm Simulation:** Simulates autonomous agents whose collective, emergent behaviour can interact with performers and influence sonic and visual parameters.
-- [SphericalSoundfilePlayer_Mac](https://github.com/ewgnr/Sonosphere/tree/main/SphericalSoundfilePlayer_v8_Mac): The macOS version of a C++-based tool for processing and playing audio files distributed on the surface of a virtual sphere.
-- [SphericalSoundfilePlayer_Windows](https://github.com/ewgnr/Sonosphere/tree/main/SphericalSoundfilePlayer_v8_Win): The Windows version of the spherical sound instrument.
-- [RayMarching](https://github.com/ewgnr/Sonosphere/tree/main/RayMarching): An OpenGL-based tool for generating video using the ray marching method.
+- **SphericalSoundfilePlayer_Mac:** The macOS version of a C++-based tool for processing and playing audio files distributed on the surface of a virtual sphere.
+- **SphericalSoundfilePlayer_Windows:** The Windows version of the spherical sound instrument.
+- **RayMarching:** An OpenGL-based tool for generating video using the ray marching method.
 
 Python-based machine learning, audio analysis, motion processing, and generative AI tools are maintained in the separate [CAS_AISoundMotion_2026](https://github.com/bisnad/CAS_AISoundMotion_2026) repository. These tools can be used independently to prepare and process audio and movement material, **or connected to Sonosphere to interact with it**, including during real-time performances. The separate repositories allow the tools to be maintained independently while remaining part of the broader Sonosphere ecosystem.
 

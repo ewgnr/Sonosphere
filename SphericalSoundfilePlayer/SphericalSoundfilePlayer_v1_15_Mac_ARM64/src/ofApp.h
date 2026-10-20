@@ -102,7 +102,13 @@ public:
 
     std::vector<std::string> directoryIterator(const std::string& path) const {
         std::vector<std::string> fileNames;
-        for (const auto& entry : std::filesystem::directory_iterator(path))
+        std::error_code ec;
+        if (!std::filesystem::is_directory(path, ec))
+        {
+            ofLogError() << "[directoryIterator] Folder not found: " << path;
+            return fileNames;
+        }
+        for (const auto& entry : std::filesystem::directory_iterator(path, ec))
         {
             if (entry.is_regular_file())
             {
