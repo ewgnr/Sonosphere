@@ -15,6 +15,9 @@ Python-based machine learning, audio analysis, motion processing, and generative
 ## Table of Contents
 
 - [Software Components](#software-components)
+  - [Motion Tracking and Swarm Simulation](#motion-tracking-and-swarm-simulation)
+  - [Machine Learning and Python Tools](#machine-learning-and-python-tools)
+    - [AudioClusteringFileExport](#audioclusteringfileexport)
 - [Installation](#installation)
 - [License](#license)
 - [Authors](#authors)
@@ -27,7 +30,19 @@ The Azure Kinect tracker translates performers' physical movements into spatial 
 
 ### Machine Learning and Python Tools
 
-The [CAS_AISoundMotion_2026](https://github.com/bisnad/CAS_AISoundMotion_2026) repository contains Python-based tools for audio analysis, clustering, motion processing, and generative AI. They complement Sonosphere both as standalone tools for preparing material and as interactive components that can be connected to the Sonosphere environment. Please refer to that repository for its current tool list, documentation, dependencies, and installation instructions.
+The [CAS_AISoundMotion_2026](https://github.com/bisnad/CAS_AISoundMotion_2026) repository contains Python-based tools for audio analysis, clustering, motion processing, and generative AI. They complement Sonosphere both as standalone tools for preparing material and as interactive components that can be connected to the Sonosphere environment.
+
+#### AudioClusteringFileExport
+
+**AudioClusteringFileExport** is a Python-based tool for analysing, segmenting, and clustering collections of audio recordings using machine learning. It extracts audio excerpts from longer recordings and calculates a selection of audio features, including root mean square (RMS), Mel-frequency cepstral coefficients (MFCCs), spectral characteristics, and chroma features.
+
+The extracted features are normalised and combined to create feature representations for unsupervised clustering using the KMeans algorithm. This allows audio material to be grouped according to its acoustic and timbral characteristics, facilitating the exploration, organisation, and selection of sound material for artistic and performative applications.
+
+The resulting clusters are exported as individual audio files, providing a structured collection of sound excerpts that can be further explored, processed, and incorporated into Sonosphere's audiovisual environment.
+
+The tool is implemented in Python and uses [uv](https://docs.astral.sh/uv/) for dependency and environment management. Audio recordings are loaded from a designated input directory (`data`), while the clustered audio excerpts are exported to `data_proc`. Feature selection, excerpt duration, overlap, and the number of clusters can be configured in the processing script.
+
+Please refer to the CAS_AISoundMotion_2026 repository for the current tool list, documentation, dependencies, and installation instructions.
 
 ## Installation
 
